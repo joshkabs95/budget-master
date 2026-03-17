@@ -10,3 +10,12 @@
   background: var(--bg-primary);
   padding: 2rem 2.5rem;
 }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .main {
+    padding: 1.25rem 1rem;
+    /* leave room for bottom nav */
+    padding-bottom: calc(70px + max(0px, env(safe-area-inset-bottom)));
+  }
+}

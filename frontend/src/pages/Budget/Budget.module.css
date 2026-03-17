@@ -4,7 +4,7 @@
 .title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
 
 .bucketsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-@media (max-width: 700px) { .bucketsGrid { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { .bucketsGrid { grid-template-columns: 1fr; gap: 0.75rem; } }
 
 .bucketCard {
   background: var(--bg-surface);
@@ -29,27 +29,24 @@
 .bucketIcon { font-size: 1rem; }
 .bucketLabel { flex: 1; font-weight: 600; font-size: 0.875rem; color: var(--text-secondary); }
 .bucketTarget { font-size: 0.7rem; color: var(--text-muted); padding: 2px 7px; border-radius: 10px; background: var(--bg-elevated); font-weight: 600; }
-
 .bucketReal { font-size: 1.875rem; font-weight: 700; margin-bottom: 0.4rem; letter-spacing: -0.03em; }
 .bucketGap { font-size: 0.75rem; font-weight: 600; margin-top: 0.5rem; }
 
-.section {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.375rem;
-}
+.section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.375rem; }
 .sectionTitle { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.125rem; }
 
 .catGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.875rem; }
-.catCard {
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 1rem;
-  transition: border-color 0.15s;
-}
+@media (max-width: 500px) { .catGrid { grid-template-columns: 1fr; } }
+.catCard { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; transition: border-color 0.15s; }
 .catCard:hover { border-color: var(--border-hover); }
 .catHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.875rem; font-weight: 600; }
 .catBucket { font-size: 0.65rem; padding: 2px 7px; border-radius: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
 .catAmounts { font-size: 0.8rem; margin-top: 0.4rem; color: var(--text-muted); }
+
+@media (max-width: 768px) {
+  .page { gap: 1.25rem; }
+  .title { font-size: 1.125rem; }
+  .section { padding: 1rem; }
+  .bucketCard { padding: 1rem; }
+  .bucketReal { font-size: 1.5rem; }
+}

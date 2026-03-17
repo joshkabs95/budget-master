@@ -63,7 +63,6 @@
   font-weight: 500;
   font-size: 0.875rem;
   transition: color 0.15s, background 0.15s;
-  position: relative;
 }
 
 .navItem:hover {
@@ -76,11 +75,7 @@
   background: var(--accent-dim);
 }
 
-.navIcon {
-  flex-shrink: 0;
-  transition: color 0.15s;
-}
-
+.navIcon { flex-shrink: 0; }
 .navLabel { line-height: 1; }
 
 /* ── Footer ── */
@@ -143,8 +138,12 @@
   transition: color 0.15s, background 0.15s;
   flex-shrink: 0;
 }
-
 .logout:hover {
   color: var(--accent-red);
   background: rgba(248, 113, 113, 0.08);
+}
+
+/* ── Mobile: hide sidebar ── */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
 }

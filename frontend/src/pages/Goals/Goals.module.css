@@ -1,49 +1,27 @@
 .page { max-width: 1020px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
 
-.header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border); gap: 0.75rem; flex-wrap: wrap; }
 .title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
 
 .btnPrimary { background: var(--accent); color: #000; border: none; border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem; transition: background 0.15s; }
 .btnPrimary:hover { background: var(--accent-hover); }
 
 .filters { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-.filter {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 0.375rem 0.875rem;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  transition: all 0.15s;
-  font-weight: 500;
-}
+.filter { background: transparent; border: 1px solid var(--border); border-radius: 20px; padding: 0.375rem 0.875rem; color: var(--text-muted); font-size: 0.8rem; transition: all 0.15s; font-weight: 500; }
 .filter:hover { color: var(--text-primary); border-color: var(--border-hover); }
 .filter.active { background: var(--accent-dim); color: var(--accent); border-color: rgba(0,212,170,0.3); }
 .sep { color: var(--border); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+@media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
 
 .card {
-  background: var(--bg-surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 1.375rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.875rem;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.15s, transform 0.15s;
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.375rem; display: flex; flex-direction: column; gap: 0.875rem;
+  position: relative; overflow: hidden; transition: border-color 0.15s, transform 0.15s;
 }
 .card:hover { border-color: var(--border-hover); transform: translateY(-1px); }
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--gc, var(--accent));
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
+.card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gc, var(--accent)); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
 
 .cardHeader { display: flex; align-items: flex-start; gap: 0.75rem; }
 .cardIcon { width: 38px; height: 38px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
@@ -57,17 +35,7 @@
 .sep2 { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-body); }
 .cardFooter { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); }
 .cardRequired { color: var(--accent); font-weight: 600; }
-
-.contributeBtn {
-  background: var(--accent-dim);
-  color: var(--accent);
-  border: 1px solid rgba(0,212,170,0.2);
-  border-radius: var(--radius-sm);
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  transition: all 0.15s;
-}
+.contributeBtn { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(0,212,170,0.2); border-radius: var(--radius-sm); padding: 0.5rem; font-size: 0.8rem; font-weight: 600; transition: all 0.15s; }
 .contributeBtn:hover { background: rgba(0,212,170,0.2); }
 .completed { text-align: center; font-size: 0.85rem; color: var(--accent-green); font-weight: 600; }
 .empty { grid-column: 1/-1; text-align: center; padding: 3.5rem; color: var(--text-muted); font-size: 0.875rem; }
@@ -81,3 +49,10 @@
 .field label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
 .input { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.65rem 0.875rem; color: var(--text-primary); font-size: 0.875rem; }
 .input:focus { outline: none; border-color: var(--accent); }
+
+@media (max-width: 768px) {
+  .page { gap: 1.25rem; }
+  .title { font-size: 1.125rem; }
+  .section { padding: 1rem; }
+  .card { padding: 1rem; }
+}

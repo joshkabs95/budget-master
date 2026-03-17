@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom'
 import Sidebar from './Sidebar'
+import BottomNav from './BottomNav'
 import styles from './MainLayout.module.css'
 
 export default function MainLayout() {
@@ -9,6 +10,7 @@ export default function MainLayout() {
       <main className={styles.main}>
         <Outlet />
       </main>
+      <BottomNav />
     </div>
   )
 }

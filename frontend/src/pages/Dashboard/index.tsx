@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import {
+  PieChart as PieChartIcon, BarChart2, TrendingUp,
+  Landmark, Lightbulb, Scale, CandlestickChart
+} from 'lucide-react'
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { transactionsAPI, savingsAPI, goalsAPI } from '../../services/api'
 import KPICard from '../../components/KPICard/KPICard'
@@ -15,11 +19,18 @@ const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padS
 function toMonthStr(d: Date) {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
 }
-
 function shiftMonth(m: string, delta: number): string {
   const [y, mo] = m.split('-').map(Number)
-  const d = new Date(y, mo - 1 + delta, 1)
-  return toMonthStr(d)
+  return toMonthStr(new Date(y, mo - 1 + delta, 1))
+}
+
+function SectionTitle({ icon: Icon, label }: { icon: any; label: string }) {
+  return (
+    <div className={styles.sectionHeader}>
+      <Icon size={13} strokeWidth={2} className={styles.sectionIcon} />
+      <h2 className={styles.sectionTitle}>{label}</h2>
+    </div>
+  )
 }
 
 export default function Dashboard() {
@@ -31,7 +42,6 @@ export default function Dashboard() {
   const [cashflow, setCashflow] = useState<CashFlowMonth[]>([])
   const [activeMonth, setActiveMonth] = useState(currentMonth)
 
-  // Auto-detect latest month on first load
   useEffect(() => {
     transactionsAPI.list({}).then(r => {
       const all: Transaction[] = r.data.results ?? r.data
@@ -42,7 +52,6 @@ export default function Dashboard() {
     goalsAPI.cashflow(12).then(r => setCashflow(r.data)).catch(() => {})
   }, [])
 
-  // Reload data whenever activeMonth changes
   useEffect(() => {
     if (!activeMonth) return
     transactionsAPI.stats({ month: activeMonth }).then(r => setStats(r.data))
@@ -52,15 +61,15 @@ export default function Dashboard() {
   }, [activeMonth])
 
   const ruleData = stats ? [
-    { name: 'Besoins', value: stats.rule_503020.needs, target: 50, color: '#3b82f6' },
-    { name: 'Envies', value: stats.rule_503020.wants, target: 30, color: '#a855f7' },
-    { name: 'Épargne', value: stats.rule_503020.savings, target: 20, color: '#22c55e' },
+    { name: 'Besoins', value: stats.rule_503020.needs, target: 50, color: '#60A5FA' },
+    { name: 'Envies', value: stats.rule_503020.wants, target: 30, color: '#A78BFA' },
+    { name: 'Épargne', value: stats.rule_503020.savings, target: 20, color: '#34D399' },
   ] : []
 
   const pieData = stats?.by_category?.slice(0, 8).map(c => ({
     name: c.category__name ?? 'Autre',
     value: parseFloat(String(c.total)),
-    color: c.category__color ?? '#6b6b7e',
+    color: c.category__color ?? '#6b7280',
   })) ?? []
 
   const trendMap: Record<string, Record<string, number>> = {}
@@ -82,6 +91,14 @@ export default function Dashboard() {
     alert: m.alert,
   }))
 
+  const tooltipStyle = {
+    background: 'var(--bg-overlay)',
+    border: '1px solid var(--border-hover)',
+    borderRadius: 8,
+    fontSize: 12,
+    boxShadow: 'var(--shadow-md)',
+  }
+
   return (
     <div className={styles.page}>
       <div className={styles.header}>
@@ -101,16 +118,16 @@ export default function Dashboard() {
 
       {/* KPI Cards */}
       <div className={styles.kpiGrid}>
-        <KPICard label="Revenus" value={stats?.income ?? 0} icon="💰" color="var(--accent-green)" index={0} />
-        <KPICard label="Dépenses" value={stats?.expenses ?? 0} icon="💳" color="var(--accent-red)" index={1} />
-        <KPICard label="Solde" value={stats?.balance ?? 0} icon="⚖️" color="var(--accent-gold)" index={2} />
-        <KPICard label="Épargne" value={stats?.savings ?? 0} icon="🏦" color="var(--accent-blue)" index={3} />
+        <KPICard label="Revenus" value={stats?.income ?? 0} icon="↑" color="var(--accent-green)" index={0} />
+        <KPICard label="Dépenses" value={stats?.expenses ?? 0} icon="↓" color="var(--accent-red)" index={1} />
+        <KPICard label="Solde" value={stats?.balance ?? 0} icon="=" color="var(--accent)" index={2} />
+        <KPICard label="Épargne" value={stats?.savings ?? 0} icon="◎" color="var(--accent-blue)" index={3} />
       </div>
 
       {/* Insights */}
       {insights.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>💡 Insights</h2>
+          <SectionTitle icon={Lightbulb} label="Insights" />
           <AlertBanner insights={insights} />
         </section>
       )}
@@ -118,7 +135,7 @@ export default function Dashboard() {
       <div className={styles.grid2}>
         {/* Rule 50/30/20 */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>⚖️ Règle 50/30/20</h2>
+          <SectionTitle icon={Scale} label="Règle 50 / 30 / 20" />
           <div className={styles.ruleTable}>
             <div className={styles.ruleHeader}>
               <span>Bucket</span><span>Cible</span><span>Réel</span><span>Écart</span>
@@ -143,10 +160,10 @@ export default function Dashboard() {
 
         {/* Savings accounts */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>🏦 Épargne</h2>
+          <SectionTitle icon={Landmark} label="Épargne" />
           {summary?.accounts.map(acc => (
             <div key={acc.id} className={styles.savingRow}>
-              <span className={styles.savingIcon} style={{ background: `${acc.color}22`, color: acc.color }}>{acc.icon}</span>
+              <span className={styles.savingIcon} style={{ background: `${acc.color}18`, color: acc.color }}>{acc.icon}</span>
               <div className={styles.savingInfo}>
                 <div className={styles.savingName}>{acc.name}</div>
                 {acc.target && (
@@ -172,15 +189,15 @@ export default function Dashboard() {
       <div className={styles.grid2}>
         {/* Pie chart */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>🍩 Répartition dépenses</h2>
+          <SectionTitle icon={PieChartIcon} label="Répartition dépenses" />
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={220}>
+            <ResponsiveContainer width="100%" height={210}>
               <PieChart>
-                <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} dataKey="value" paddingAngle={2}>
+                <Pie data={pieData} cx="50%" cy="50%" innerRadius={52} outerRadius={80} dataKey="value" paddingAngle={2}>
                   {pieData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip formatter={(v: number) => `${v.toFixed(0)} €`} contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} />
-                <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: '0.75rem' }} />
+                <Tooltip formatter={(v: number) => `${v.toFixed(0)} €`} contentStyle={tooltipStyle} />
+                <Legend iconType="circle" iconSize={7} wrapperStyle={{ fontSize: '0.72rem', paddingTop: '0.5rem' }} />
               </PieChart>
             </ResponsiveContainer>
           ) : <div className={styles.empty}>Aucune dépense ce mois</div>}
@@ -188,12 +205,12 @@ export default function Dashboard() {
 
         {/* Bar chart */}
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>📊 Évolution 6 mois</h2>
-          <ResponsiveContainer width="100%" height={220}>
-            <BarChart data={trendData} barSize={14}>
+          <SectionTitle icon={BarChart2} label="Évolution 6 mois" />
+          <ResponsiveContainer width="100%" height={210}>
+            <BarChart data={trendData} barSize={12} barGap={2}>
               <XAxis dataKey="month" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} />
+              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} width={40} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Bar dataKey="Revenus" fill="var(--accent-green)" radius={[3,3,0,0]} />
               <Bar dataKey="Dépenses" fill="var(--accent-red)" radius={[3,3,0,0]} />
               <Bar dataKey="Épargne" fill="var(--accent-blue)" radius={[3,3,0,0]} />
@@ -205,14 +222,16 @@ export default function Dashboard() {
       {/* Cash flow projection */}
       {cashflow.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>📈 Projection trésorerie 12 mois</h2>
-          <ResponsiveContainer width="100%" height={180}>
-            <BarChart data={cashflowFormatted} barSize={16}>
+          <SectionTitle icon={CandlestickChart} label="Projection trésorerie 12 mois" />
+          <ResponsiveContainer width="100%" height={160}>
+            <BarChart data={cashflowFormatted} barSize={14}>
               <XAxis dataKey="month" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-              <Tooltip contentStyle={{ background: 'var(--bg-elevated)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }} formatter={(v: number) => `${v.toFixed(0)} €`} />
+              <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} width={48} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v.toFixed(0)} €`} />
               <Bar dataKey="solde" radius={[3,3,0,0]}>
-                {cashflowFormatted.map((entry, i) => <Cell key={i} fill={entry.alert ? 'var(--accent-red)' : 'var(--accent-blue)'} />)}
+                {cashflowFormatted.map((entry, i) => (
+                  <Cell key={i} fill={entry.alert ? 'var(--accent-red)' : entry.solde >= 0 ? 'var(--accent)' : 'var(--accent-orange)'} />
+                ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -221,7 +240,7 @@ export default function Dashboard() {
 
       {/* Recent transactions */}
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>🕐 Transactions récentes</h2>
+        <SectionTitle icon={TrendingUp} label="Transactions récentes" />
         <div className={styles.txnList}>
           {recentTxns.length > 0
             ? recentTxns.map(t => <TransactionRow key={t.id} transaction={t} />)
