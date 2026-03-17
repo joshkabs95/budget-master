@@ -42,7 +42,7 @@ export default function KPICard({ label, value, icon, color, prefix = '', suffix
       style={{ '--card-color': color } as React.CSSProperties}
     >
       <div className={styles.header}>
-        <span className={styles.icon}>{icon}</span>
+        <div className={styles.icon} style={{ color: color }}>{icon}</div>
         {trend !== undefined && (
           <span className={`${styles.trend} ${trend >= 0 ? styles.positive : styles.negative}`}>
             {trend >= 0 ? '+' : ''}{trend.toFixed(1)}%
@@ -51,7 +51,6 @@ export default function KPICard({ label, value, icon, color, prefix = '', suffix
       </div>
       <div className={styles.value}>{prefix}{formatted}{suffix}</div>
       <div className={styles.label}>{label}</div>
-      <div className={styles.glow} />
     </motion.div>
   )
 }

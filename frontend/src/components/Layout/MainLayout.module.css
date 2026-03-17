@@ -8,5 +8,5 @@
   flex: 1;
   overflow-y: auto;
   background: var(--bg-primary);
-  padding: 2rem;
+  padding: 2rem 2.5rem;
 }

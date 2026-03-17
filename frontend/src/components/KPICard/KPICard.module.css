@@ -1,36 +1,68 @@
 .card {
   position: relative;
   background: var(--bg-surface);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 12px;
-  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.375rem 1.5rem;
   overflow: hidden;
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, transform 0.2s;
 }
-.card:hover { border-color: rgba(255,255,255,0.12); }
+.card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
 
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-.icon { font-size: 1.5rem; }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
 
-.trend { font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
-.positive { color: var(--accent-green); background: rgba(34,197,94,0.12); }
-.negative { color: var(--accent-red); background: rgba(239,68,68,0.12); }
+.icon {
+  font-size: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--card-color, var(--accent));
+}
+
+.trend { font-size: 0.7rem; font-weight: 600; padding: 3px 7px; border-radius: 20px; }
+.positive { color: var(--accent-green); background: rgba(52,211,153,0.1); }
+.negative { color: var(--accent-red); background: rgba(248,113,113,0.1); }
 
 .value {
   font-family: var(--font-display);
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   font-weight: 700;
-  color: var(--card-color, var(--text-primary));
+  color: var(--text-primary);
   line-height: 1;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.03em;
 }
-.label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
 
-.glow {
-  position: absolute;
-  top: 0; right: 0;
-  width: 80px; height: 80px;
-  background: radial-gradient(circle, var(--card-color, transparent) 0%, transparent 70%);
-  opacity: 0.08;
-  pointer-events: none;
+.label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
+
+/* Accent bottom border */
+.card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card-color, var(--accent));
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.card:hover::after { opacity: 0.5; }

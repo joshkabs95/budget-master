@@ -1,18 +1,61 @@
-.page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
-.title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+.page { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
+
+.header { padding-bottom: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
+
+.btnPrimary { background: var(--accent); color: #000; border: none; border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem; transition: background 0.15s; }
+.btnPrimary:hover { background: var(--accent-hover); }
+
 .kpiRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
 @media (max-width: 700px) { .kpiRow { grid-template-columns: repeat(2, 1fr); } }
-.kpi { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 1.25rem; text-align: center; }
-.kpiVal { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
-.kpiLabel { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
-.section { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem; }
-.sectionTitle { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem; }
+
+.kpi {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  text-align: center;
+}
+.kpiVal { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+.kpiLabel { font-size: 0.7rem; color: var(--text-muted); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
+
+.section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.375rem; }
+.sectionTitle { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.125rem; }
+
 .accGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
-.accCard { background: var(--bg-elevated); border: 1px solid rgba(255,255,255,0.06); border-top: 3px solid var(--ac); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+
+.accCard {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.accCard:hover { border-color: var(--border-hover); transform: translateY(-1px); }
+.accCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--ac, var(--accent));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
 .accHeader { display: flex; align-items: center; gap: 0.75rem; }
-.accIcon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.accIcon { width: 38px; height: 38px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
 .accName { font-weight: 600; font-size: 0.9rem; }
-.accRate { font-size: 0.75rem; color: var(--text-muted); }
-.accBalance { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+.accRate { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; }
+.accBalance { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.025em; }
 .accTarget { font-size: 0.75rem; color: var(--text-muted); }
-.accContrib { font-size: 0.8rem; color: var(--accent-green); }
+.accContrib { font-size: 0.8rem; color: var(--accent-green); font-weight: 500; }
+
+.form { display: flex; flex-direction: column; gap: 1rem; }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+.input { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.65rem 0.875rem; color: var(--text-primary); font-size: 0.875rem; }
+.input:focus { outline: none; border-color: var(--accent); }

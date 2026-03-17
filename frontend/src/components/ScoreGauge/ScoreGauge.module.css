@@ -4,5 +4,5 @@
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
 }
-.score { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; line-height: 1; }
+.score { font-size: 1.5rem; font-weight: 700; line-height: 1; letter-spacing: -0.03em; }
 .max { font-size: 0.7rem; color: var(--text-muted); }

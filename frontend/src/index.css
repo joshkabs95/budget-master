@@ -1,17 +1,45 @@
 :root {
-  --bg-primary:    #0a0a0f;
-  --bg-surface:    #12121a;
-  --bg-elevated:   #1a1a26;
-  --accent-gold:   #c9a84c;
-  --accent-green:  #22c55e;
-  --accent-red:    #ef4444;
-  --accent-orange: #f97316;
-  --accent-blue:   #3b82f6;
-  --accent-purple: #a855f7;
-  --text-primary:  #f8f8f2;
-  --text-muted:    #6b6b7e;
-  --font-display:  'Playfair Display', serif;
-  --font-body:     'Manrope', sans-serif;
+  /* Backgrounds — deep navy like Finary */
+  --bg-primary:    #0B0F1A;
+  --bg-surface:    #111827;
+  --bg-elevated:   #1A2235;
+  --bg-overlay:    #1F2937;
+
+  /* Primary accent — Finary teal */
+  --accent:        #00D4AA;
+  --accent-hover:  #00B896;
+  --accent-dim:    rgba(0, 212, 170, 0.12);
+
+  /* Semantic */
+  --accent-gold:   #00D4AA;   /* compat — mapped to teal */
+  --accent-green:  #34D399;
+  --accent-red:    #F87171;
+  --accent-orange: #FBBF24;
+  --accent-blue:   #60A5FA;
+  --accent-purple: #A78BFA;
+
+  /* Text */
+  --text-primary:  #F0F4F8;
+  --text-secondary:#9CA3AF;
+  --text-muted:    #6B7280;
+
+  /* Borders */
+  --border:        rgba(255,255,255,0.06);
+  --border-hover:  rgba(255,255,255,0.12);
+
+  /* Font — Inter only */
+  --font-display:  'Inter', -apple-system, sans-serif;
+  --font-body:     'Inter', -apple-system, sans-serif;
+
+  /* Shadows */
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:     0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:     0 8px 32px rgba(0,0,0,0.5);
+
+  /* Radius */
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     14px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -23,14 +51,16 @@ html, body, #root {
   font-family: var(--font-body);
   font-size: 14px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; font-family: var(--font-body); }
 input, select, textarea { font-family: var(--font-body); }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-surface); }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg-elevated); border-radius: 3px; }
 
 .sr-only {

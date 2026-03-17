@@ -32,7 +32,10 @@ export default function Register() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.logo}>💰 Budget Master</div>
+        <div className={styles.logo}>
+          <div className={styles.logoMark}>B</div>
+          <span className={styles.logoText}>Budget<strong>Master</strong></span>
+        </div>
         <h1 className={styles.title}>Créer un compte</h1>
         <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
           <div className={styles.field}>
