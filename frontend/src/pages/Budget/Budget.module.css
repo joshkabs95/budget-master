@@ -1,0 +1,18 @@
+.page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+.title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+.bucketsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+@media (max-width: 700px) { .bucketsGrid { grid-template-columns: 1fr; } }
+.bucketCard { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-top: 3px solid var(--bc); border-radius: 10px; padding: 1.25rem; }
+.bucketHeader { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+.bucketIcon { font-size: 1.1rem; }
+.bucketLabel { flex: 1; font-weight: 500; font-size: 0.875rem; }
+.bucketTarget { font-size: 0.8rem; color: var(--text-muted); }
+.bucketReal { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem; }
+.bucketGap { font-size: 0.75rem; font-weight: 600; margin-top: 0.4rem; }
+.section { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem; }
+.sectionTitle { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem; }
+.catGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+.catCard { background: var(--bg-elevated); border-radius: 10px; padding: 1rem; }
+.catHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.875rem; font-weight: 500; }
+.catBucket { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.catAmounts { font-size: 0.8rem; margin-top: 0.4rem; color: var(--text-muted); }

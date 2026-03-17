@@ -1,0 +1,62 @@
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--bg-surface);
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem 1rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding: 0 0.5rem;
+}
+
+.brandIcon { font-size: 1.5rem; }
+.brandName {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--accent-gold);
+}
+
+.nav { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.navItem:hover { background: var(--bg-elevated); color: var(--text-primary); }
+.navItem.active { background: rgba(201,168,76,0.12); color: var(--accent-gold); }
+.navIcon { font-size: 1.1rem; width: 1.4rem; text-align: center; }
+.navLabel { font-size: 0.875rem; }
+
+.footer { margin-top: auto; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+
+.user { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem; }
+.avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent-gold);
+  color: var(--bg-primary);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.8rem;
+}
+.username { font-size: 0.8rem; color: var(--text-muted); }
+
+.logout {
+  width: 100%; padding: 0.5rem;
+  background: transparent; border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted); border-radius: 6px; font-size: 0.8rem;
+  transition: all 0.15s;
+}
+.logout:hover { border-color: var(--accent-red); color: var(--accent-red); }

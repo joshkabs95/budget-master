@@ -1,0 +1,35 @@
+.page {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--bg-primary);
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%);
+}
+.card {
+  width: 100%; max-width: 400px;
+  background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 2.5rem 2rem;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+}
+.logo { font-family: var(--font-display); font-size: 1.25rem; color: var(--accent-gold); text-align: center; margin-bottom: 1.5rem; }
+.title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; text-align: center; margin-bottom: 2rem; }
+.form { display: flex; flex-direction: column; gap: 1.25rem; }
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.field label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+.field input {
+  background: var(--bg-elevated); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px; padding: 0.7rem 0.875rem;
+  color: var(--text-primary); font-size: 0.9rem;
+  transition: border-color 0.15s;
+}
+.field input:focus { outline: none; border-color: var(--accent-gold); }
+.error { font-size: 0.75rem; color: var(--accent-red); }
+.serverError { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); border-radius: 6px; padding: 0.6rem 0.875rem; font-size: 0.85rem; color: var(--accent-red); }
+.btn {
+  background: var(--accent-gold); color: var(--bg-primary);
+  border: none; border-radius: 8px; padding: 0.85rem;
+  font-weight: 700; font-size: 0.95rem; transition: opacity 0.15s;
+}
+.btn:hover { opacity: 0.9; }
+.btn:disabled { opacity: 0.5; }
+.link { text-align: center; font-size: 0.85rem; color: var(--text-muted); margin-top: 1.25rem; }
+.link a { color: var(--accent-gold); }
+.hint { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }

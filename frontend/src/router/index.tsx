@@ -1,0 +1,45 @@
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import MainLayout from '../components/Layout/MainLayout'
+import Dashboard from '../pages/Dashboard'
+import Transactions from '../pages/Transactions'
+import Budget from '../pages/Budget'
+import Savings from '../pages/Savings'
+import Analytics from '../pages/Analytics'
+import Goals from '../pages/Goals'
+import Login from '../pages/Auth/Login'
+import Register from '../pages/Auth/Register'
+
+function ProtectedRoute() {
+  const { isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', color: 'var(--accent-gold)', fontFamily: 'var(--font-display)', fontSize: '1.5rem' }}>Budget Master</div>
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+}
+
+function PublicRoute() {
+  const { isAuthenticated, isLoading } = useAuth()
+  if (isLoading) return null
+  return isAuthenticated ? <Navigate to="/" replace /> : <Outlet />
+}
+
+export default function AppRouter() {
+  return (
+    <Routes>
+      <Route element={<PublicRoute />}>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+      </Route>
+      <Route element={<ProtectedRoute />}>
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/transactions" element={<Transactions />} />
+          <Route path="/budget" element={<Budget />} />
+          <Route path="/savings" element={<Savings />} />
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/goals" element={<Goals />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  )
+}

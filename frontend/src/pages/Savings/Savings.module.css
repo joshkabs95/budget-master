@@ -1,0 +1,18 @@
+.page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+.title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+.kpiRow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+@media (max-width: 700px) { .kpiRow { grid-template-columns: repeat(2, 1fr); } }
+.kpi { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 1.25rem; text-align: center; }
+.kpiVal { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+.kpiLabel { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+.section { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem; }
+.sectionTitle { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem; }
+.accGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+.accCard { background: var(--bg-elevated); border: 1px solid rgba(255,255,255,0.06); border-top: 3px solid var(--ac); border-radius: 10px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; }
+.accHeader { display: flex; align-items: center; gap: 0.75rem; }
+.accIcon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.accName { font-weight: 600; font-size: 0.9rem; }
+.accRate { font-size: 0.75rem; color: var(--text-muted); }
+.accBalance { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+.accTarget { font-size: 0.75rem; color: var(--text-muted); }
+.accContrib { font-size: 0.8rem; color: var(--accent-green); }

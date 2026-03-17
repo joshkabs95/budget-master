@@ -1,0 +1,30 @@
+.page { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+.actions { display: flex; gap: 0.75rem; }
+.btnPrimary { background: var(--accent-gold); color: var(--bg-primary); border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 600; font-size: 0.875rem; transition: opacity 0.15s; }
+.btnPrimary:hover { opacity: 0.85; }
+.btnPrimary:disabled { opacity: 0.5; }
+.btnSecondary { background: transparent; color: var(--text-muted); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 0.6rem 1rem; font-size: 0.875rem; transition: all 0.15s; }
+.btnSecondary:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
+.filters { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.input { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.6rem 0.875rem; color: var(--text-primary); font-size: 0.875rem; }
+.input:focus { outline: none; border-color: var(--accent-gold); }
+.list { display: flex; flex-direction: column; gap: 0.5rem; }
+.empty { text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.875rem; }
+.form { display: flex; flex-direction: column; gap: 1rem; }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: 0.8rem; color: var(--text-muted); }
+.dropzone { border: 2px dashed rgba(255,255,255,0.12); border-radius: 12px; padding: 3rem; text-align: center; cursor: pointer; transition: border-color 0.15s; }
+.dropzone:hover, .dragActive { border-color: var(--accent-gold); }
+.dropIcon { font-size: 2.5rem; display: block; margin-bottom: 0.75rem; }
+.dropHint { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem; }
+.importHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; font-size: 0.85rem; color: var(--text-muted); }
+.importList { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.4rem; }
+.importRow { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0.75rem; border-radius: 6px; background: var(--bg-surface); font-size: 0.8rem; cursor: pointer; }
+.duplicate { opacity: 0.4; }
+.importDate { color: var(--text-muted); min-width: 80px; }
+.importLabel { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.importAmt { font-weight: 600; color: var(--accent-gold); min-width: 70px; text-align: right; }
+.importCat { color: var(--text-muted); font-size: 0.75rem; min-width: 80px; }
+.dupBadge { background: rgba(239,68,68,0.15); color: var(--accent-red); font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; }

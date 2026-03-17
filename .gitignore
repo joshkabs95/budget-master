@@ -1,0 +1,50 @@
+# Env
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+venv/
+.venv/
+env/
+
+# Django
+*.sqlite3
+/backend/staticfiles/
+/backend/media/
+/backend/db.sqlite3
+
+# Node / React
+node_modules/
+/frontend/dist/
+/frontend/.env
+*.local
+
+# Docker
+.docker/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Claude Code local settings (may contain tokens)
+.claude/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

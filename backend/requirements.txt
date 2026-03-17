@@ -1,0 +1,11 @@
+django>=4.2,<5.0
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+pdfplumber
+pandas
+python-decouple
+Pillow
+psycopg2-binary
+gunicorn
+django-prometheus

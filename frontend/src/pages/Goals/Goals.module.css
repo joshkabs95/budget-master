@@ -1,0 +1,35 @@
+.page { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.title { font-family: var(--font-display); font-size: 1.75rem; font-weight: 700; }
+.btnPrimary { background: var(--accent-gold); color: var(--bg-primary); border: none; border-radius: 8px; padding: 0.6rem 1.25rem; font-weight: 600; font-size: 0.875rem; }
+.btnPrimary:hover { opacity: 0.85; }
+.filters { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+.filter { background: transparent; border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 0.4rem 0.875rem; color: var(--text-muted); font-size: 0.8rem; transition: all 0.15s; }
+.filter:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
+.filter.active { background: rgba(201,168,76,0.12); color: var(--accent-gold); border-color: rgba(201,168,76,0.3); }
+.sep { color: rgba(255,255,255,0.1); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
+.card { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-top: 3px solid var(--gc); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.875rem; }
+.cardHeader { display: flex; align-items: flex-start; gap: 0.75rem; }
+.cardIcon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+.cardMeta { flex: 1; }
+.cardName { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.3rem; }
+.cardBadges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.horizonBadge, .typeBadge { font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+.typeBadge { background: rgba(255,255,255,0.06); color: var(--text-muted); }
+.cardAmounts { display: flex; align-items: baseline; margin-bottom: 0.4rem; font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; }
+.sep2 { font-size: 0.8rem; color: var(--text-muted); font-family: var(--font-body); }
+.cardFooter { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted); }
+.cardRequired { color: var(--accent-gold); font-weight: 600; }
+.contributeBtn { background: rgba(201,168,76,0.1); color: var(--accent-gold); border: 1px solid rgba(201,168,76,0.2); border-radius: 6px; padding: 0.5rem; font-size: 0.8rem; font-weight: 600; transition: all 0.15s; }
+.contributeBtn:hover { background: rgba(201,168,76,0.2); }
+.completed { text-align: center; font-size: 0.85rem; color: var(--accent-green); font-weight: 600; }
+.empty { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted); font-size: 0.875rem; }
+.section { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem; }
+.sectionTitle { font-size: 0.9rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 1rem; }
+.cashflowAlert { margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent-orange); }
+.form { display: flex; flex-direction: column; gap: 1rem; }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: 0.8rem; color: var(--text-muted); }
+.input { background: var(--bg-surface); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 0.65rem 0.875rem; color: var(--text-primary); font-size: 0.875rem; }
+.input:focus { outline: none; border-color: var(--accent-gold); }
