@@ -119,6 +119,11 @@ export const goalsAPI = {
   cashflow: (months?: number) => api.get('/goals/cashflow/', { params: { months } }),
 }
 
+// Forecast
+export const forecastAPI = {
+  budget: (months = 6) => api.get(`/forecast/budget/?months=${months}`),
+}
+
 // Documents
 export const documentsAPI = {
   upload: (file: File) => {

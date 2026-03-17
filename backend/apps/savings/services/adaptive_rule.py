@@ -183,6 +183,35 @@ class AdaptiveRuleEngine:
             })
         return suggestions
 
+    def ingest_forecast_snapshot(self, snapshot: dict, weight: float = 0.6) -> dict:
+        """
+        Intègre un snapshot prévisionnel dans le moteur.
+        snapshot = { 'savings_pct': ..., 'needs_pct': ..., 'wants_pct': ... }
+        weight < 1.0 : les données prévisionnelles ont moins de poids que le réel.
+        """
+        return {
+            'savings': snapshot.get('savings_pct', 0),
+            'needs':   snapshot.get('needs_pct',   0),
+            'wants':   snapshot.get('wants_pct',   0),
+            '_is_forecast': True,
+            '_weight': weight,
+        }
+
+    def _recompute_weighted_alert(self, rule, current_rates: dict,
+                                   forecast_rates: dict, forecast_weight: float = 0.6) -> str:
+        """
+        Combine taux réels + prévisionnels pour anticiper une dégradation.
+        Retourne la sévérité mixte.
+        """
+        real_weight = 1.0
+        mixed = {}
+        for key in ('savings', 'needs', 'wants'):
+            real_val     = current_rates.get(key, 0)
+            forecast_val = forecast_rates.get(key, 0)
+            mixed[key] = (real_val * real_weight + forecast_val * forecast_weight) / (real_weight + forecast_weight)
+        result = self.compensate(rule, mixed)
+        return result['severity']
+
     def _build_message(self, plan, total_gap, residual_gap, rule):
         severity = plan['severity']
         if severity == 'critical':

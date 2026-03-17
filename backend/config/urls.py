@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/savings/', include('apps.savings.urls')),
     path('api/goals/', include('apps.goals.urls')),
     path('api/documents/', include('apps.documents.urls')),
+    path('api/forecast/', include('apps.forecasting.urls')),
     # Serve frontend static assets
     re_path(r'^assets/(?P<path>.+)$', serve_static_asset),
     # Catch-all → React index.html (client-side routing)

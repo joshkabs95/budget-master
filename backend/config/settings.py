@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'apps.savings',
     'apps.goals',
     'apps.documents',
+    'apps.forecasting',
 ]
 
 MIDDLEWARE = [

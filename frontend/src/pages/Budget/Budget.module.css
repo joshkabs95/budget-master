@@ -33,7 +33,9 @@
 .bucketGap { font-size: 0.75rem; font-weight: 600; margin-top: 0.5rem; }
 
 .section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.375rem; }
-.sectionTitle { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 1.125rem; }
+.sectionHeader { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.125rem; }
+.sectionIcon { color: var(--text-muted); flex-shrink: 0; }
+.sectionTitle { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.09em; line-height: 1; }
 
 .catGrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.875rem; }
 @media (max-width: 500px) { .catGrid { grid-template-columns: 1fr; } }
