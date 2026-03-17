@@ -5,7 +5,7 @@ class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
         fields = ['id', 'file', 'file_type', 'status', 'imported_at', 'transaction_count', 'created_at']
-        read_only_fields = ['status', 'imported_at', 'transaction_count', 'created_at']
+        read_only_fields = ['file_type', 'status', 'imported_at', 'transaction_count', 'created_at']
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user

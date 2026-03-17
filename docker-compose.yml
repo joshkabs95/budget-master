@@ -78,8 +78,7 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--storage.tsdb.retention.time=30d'
       - '--web.enable-lifecycle'
-    ports:
-      - "9090:9090"
+    # No external port — Grafana accesses Prometheus on Docker network
 
   # ── PostgreSQL Exporter (for Prometheus) ────────────────
   postgres-exporter:

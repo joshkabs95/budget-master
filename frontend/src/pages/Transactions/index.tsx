@@ -16,6 +16,7 @@ export default function Transactions() {
   const [cats, setCats] = useState<Category[]>([])
   const [accounts, setAccounts] = useState<SavingsAccount[]>([])
   const [month, setMonth] = useState(currentMonth)
+  const [monthReady, setMonthReady] = useState(false)
   const [filterCat, setFilterCat] = useState('')
   const [filterType, setFilterType] = useState('')
   const [showAdd, setShowAdd] = useState(false)
@@ -28,11 +29,27 @@ export default function Transactions() {
   const { register, handleSubmit, reset } = useForm()
 
   const load = useCallback(() => {
+    if (!monthReady) return
     transactionsAPI.list({ month, category: filterCat || undefined, type: filterType || undefined })
       .then(r => setTxns(r.data.results ?? r.data))
-  }, [month, filterCat, filterType])
+  }, [month, filterCat, filterType, monthReady])
 
   useEffect(() => { load() }, [load])
+  // Auto-detect most recent month that has transactions
+  useEffect(() => {
+    transactionsAPI.list({})
+      .then(r => {
+        const all: Transaction[] = r.data.results ?? r.data
+        if (all.length > 0) {
+          const d = new Date(all[0].date)
+          const m = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+          setMonth(m)
+        }
+        setMonthReady(true)
+      })
+      .catch(() => setMonthReady(true))
+  }, [])
+
   useEffect(() => {
     categoriesAPI.list().then(r => setCats(r.data.results ?? r.data))
     savingsAPI.accounts.list().then(r => setAccounts(r.data.results ?? r.data))

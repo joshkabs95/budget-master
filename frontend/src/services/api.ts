@@ -124,7 +124,8 @@ export const documentsAPI = {
   upload: (file: File) => {
     const form = new FormData()
     form.append('file', file)
-    return api.post('/documents/upload/', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+    // Do NOT set Content-Type manually — browser must add the multipart boundary automatically
+    return api.post('/documents/upload/', form, { headers: { 'Content-Type': undefined } })
   },
   preview: (id: number) => api.get(`/documents/${id}/preview/`),
   import: (id: number, transactions: object[]) =>

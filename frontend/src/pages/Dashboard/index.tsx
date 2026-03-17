@@ -12,6 +12,16 @@ import styles from './Dashboard.module.css'
 const today = new Date()
 const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`
 
+function toMonthStr(d: Date) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+}
+
+function shiftMonth(m: string, delta: number): string {
+  const [y, mo] = m.split('-').map(Number)
+  const d = new Date(y, mo - 1 + delta, 1)
+  return toMonthStr(d)
+}
+
 export default function Dashboard() {
   const [stats, setStats] = useState<TransactionStats | null>(null)
   const [compensation, setCompensation] = useState<CompensationResult | null>(null)
@@ -19,15 +29,27 @@ export default function Dashboard() {
   const [insights, setInsights] = useState<Insight[]>([])
   const [recentTxns, setRecentTxns] = useState<Transaction[]>([])
   const [cashflow, setCashflow] = useState<CashFlowMonth[]>([])
+  const [activeMonth, setActiveMonth] = useState(currentMonth)
 
+  // Auto-detect latest month on first load
   useEffect(() => {
-    transactionsAPI.stats({ month: currentMonth }).then(r => setStats(r.data))
-    savingsAPI.compensation().then(r => setCompensation(r.data)).catch(() => {})
-    savingsAPI.summary({ month: currentMonth }).then(r => setSummary(r.data)).catch(() => {})
+    transactionsAPI.list({}).then(r => {
+      const all: Transaction[] = r.data.results ?? r.data
+      const month = all.length > 0 ? toMonthStr(new Date(all[0].date)) : currentMonth
+      setActiveMonth(month)
+    })
     transactionsAPI.insights().then(r => setInsights(r.data)).catch(() => {})
-    transactionsAPI.list({ month: currentMonth }).then(r => setRecentTxns((r.data.results ?? r.data).slice(0, 5))).catch(() => {})
     goalsAPI.cashflow(12).then(r => setCashflow(r.data)).catch(() => {})
   }, [])
+
+  // Reload data whenever activeMonth changes
+  useEffect(() => {
+    if (!activeMonth) return
+    transactionsAPI.stats({ month: activeMonth }).then(r => setStats(r.data))
+    savingsAPI.compensation({ month: activeMonth }).then(r => setCompensation(r.data)).catch(() => {})
+    savingsAPI.summary({ month: activeMonth }).then(r => setSummary(r.data)).catch(() => {})
+    transactionsAPI.list({ month: activeMonth }).then(r => setRecentTxns((r.data.results ?? r.data).slice(0, 5))).catch(() => {})
+  }, [activeMonth])
 
   const ruleData = stats ? [
     { name: 'Besoins', value: stats.rule_503020.needs, target: 50, color: '#3b82f6' },
@@ -64,7 +86,17 @@ export default function Dashboard() {
     <div className={styles.page}>
       <div className={styles.header}>
         <h1 className={styles.title}>Dashboard</h1>
-        <span className={styles.month}>{new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}</span>
+        <div className={styles.monthNav}>
+          <button className={styles.monthBtn} onClick={() => setActiveMonth(m => shiftMonth(m, -1))}>‹</button>
+          <span className={styles.month}>
+            {new Date(activeMonth + '-15').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+          </span>
+          <button
+            className={styles.monthBtn}
+            onClick={() => setActiveMonth(m => shiftMonth(m, +1))}
+            disabled={activeMonth >= currentMonth}
+          >›</button>
+        </div>
       </div>
 
       {/* KPI Cards */}
