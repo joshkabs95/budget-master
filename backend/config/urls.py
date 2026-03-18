@@ -3,7 +3,7 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
-from django.http import FileResponse, Http404
+from django.http import FileResponse, Http404, JsonResponse
 import os
 
 def serve_react(request, path=''):
@@ -20,8 +20,12 @@ def serve_static_asset(request, path):
         return FileResponse(open(file_path, 'rb'), content_type=mime or 'application/octet-stream')
     raise Http404()
 
+def health_check(request):
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
     path('', include('django_prometheus.urls')),
+    path('api/health/', health_check),
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.urls')),
     path('api/categories/', include('apps.categories.urls')),
