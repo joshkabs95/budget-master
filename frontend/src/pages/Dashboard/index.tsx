@@ -229,9 +229,13 @@ export default function Dashboard() {
               <YAxis tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} width={48} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v.toFixed(0)} €`} />
               <Bar dataKey="solde" radius={[3,3,0,0]}>
-                {cashflowFormatted.map((entry, i) => (
-                  <Cell key={i} fill={entry.alert ? 'var(--accent-red)' : entry.solde >= 0 ? 'var(--accent)' : 'var(--accent-orange)'} />
-                ))}
+                {cashflowFormatted.map((entry, i) => {
+                  let color: string
+                  if (entry.solde >= 0) color = 'var(--accent-green)'
+                  else if (entry.solde >= -500) color = 'var(--accent-orange)'
+                  else color = 'var(--accent-red)'
+                  return <Cell key={i} fill={color} />
+                })}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
