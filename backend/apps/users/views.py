@@ -101,7 +101,7 @@ class ExportBackupView(APIView):
 
         transactions = list(Transaction.objects.filter(user=user).values(
             'id', 'label', 'amount', 'type', 'date', 'notes',
-            'category__name', 'is_recurring', 'recurrence_frequency'
+            'category__name', 'is_recurring', 'recurrence'
         ))
 
         categories = list(Category.objects.filter(user=user).values(
@@ -109,7 +109,7 @@ class ExportBackupView(APIView):
         ))
 
         savings = list(SavingsAccount.objects.filter(user=user).values(
-            'id', 'name', 'balance', 'target_amount', 'color', 'icon'
+            'id', 'name', 'balance', 'target', 'color', 'icon'
         ))
 
         goals = list(Goal.objects.filter(user=user).values(

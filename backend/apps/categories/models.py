@@ -1,5 +1,12 @@
+import re
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+
+
+def validate_month(value):
+    if not re.match(r'^\d{4}-(0[1-9]|1[0-2])$', value):
+        raise ValidationError(f'"{value}" n\'est pas un format de mois valide (YYYY-MM).')
 
 
 class Category(models.Model):
@@ -25,6 +32,10 @@ class Category(models.Model):
     class Meta:
         db_table = 'categories'
         ordering = ['name']
+        indexes = [
+            models.Index(fields=['user', 'rule_bucket'], name='idx_cat_user_bucket'),
+            models.Index(fields=['user', 'type'], name='idx_cat_user_type'),
+        ]
 
     def __str__(self):
         return f"{self.icon} {self.name}"
@@ -52,7 +63,7 @@ class CategoryRule(models.Model):
 class CategoryBudget(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='category_budgets')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='budgets')
-    month = models.CharField(max_length=7)  # YYYY-MM
+    month = models.CharField(max_length=7, validators=[validate_month])  # YYYY-MM
     allocated = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     carried_over = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 

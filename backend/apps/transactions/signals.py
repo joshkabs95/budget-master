@@ -1,6 +1,10 @@
+import logging
+
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from .models import Transaction
+
+logger = logging.getLogger(__name__)
 
 
 @receiver(post_save, sender=Transaction)
@@ -11,7 +15,7 @@ def transaction_changed(sender, instance, **kwargs):
         from apps.notifications.tasks import process_transaction_event
         process_transaction_event.delay(instance.user_id)
     except Exception:
-        pass
+        logger.exception('transaction_changed: impossible d\'envoyer la tâche Celery (user=%s)', instance.user_id)
 
 
 @receiver(post_save, sender=Transaction)
@@ -39,7 +43,7 @@ def auto_link_goal(sender, instance, created, **kwargs):
         goal.current_amount += instance.amount
         goal.save(update_fields=['current_amount'])
     except Exception:
-        pass
+        logger.exception('auto_link_goal: erreur pour transaction pk=%s', instance.pk)
 
 
 @receiver(post_delete, sender=Transaction)
@@ -54,4 +58,4 @@ def unlink_goal_on_delete(sender, instance, **kwargs):
             goal.current_amount = max(goal.current_amount - instance.amount, 0)
             goal.save(update_fields=['current_amount'])
     except Exception:
-        pass
+        logger.exception('unlink_goal_on_delete: erreur pour transaction pk=%s', instance.pk)

@@ -28,7 +28,7 @@ class Transaction(models.Model):
     ]
 
     source = models.CharField(max_length=10, choices=SOURCE_CHOICES, default='manual')
-    import_hash = models.CharField(max_length=64, blank=True, null=True, unique=True)
+    import_hash = models.CharField(max_length=64, blank=True, null=True)
     notes = models.TextField(blank=True, default='')
     is_recurring = models.BooleanField(default=False)
     recurrence = models.CharField(max_length=20, choices=RECURRENCE_CHOICES, blank=True, default='')
@@ -37,6 +37,17 @@ class Transaction(models.Model):
     class Meta:
         db_table = 'transactions'
         ordering = ['-date', '-created_at']
+        indexes = [
+            models.Index(fields=['user', 'date'], name='idx_txn_user_date'),
+            models.Index(fields=['user', 'type'], name='idx_txn_user_type'),
+        ]
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'import_hash'],
+                condition=models.Q(import_hash__isnull=False),
+                name='uniq_user_import_hash',
+            )
+        ]
 
     def __str__(self):
         return f"{self.label} — {self.amount}€ ({self.date})"
