@@ -73,6 +73,11 @@ export const authAPI = {
   login: (data: { username: string; password: string }) =>
     api.post('/auth/login/', data),
   profile: () => api.get('/auth/profile/'),
+  profile_update: (data: object) => api.patch('/auth/profile/', data),
+  changePassword: (current_password: string, new_password: string) =>
+    api.post('/auth/change-password/', { current_password, new_password }),
+  completeOnboarding: (data: object) =>
+    api.post('/auth/complete-onboarding/', data),
 }
 
 // Categories
@@ -81,6 +86,21 @@ export const categoriesAPI = {
   create: (data: object) => api.post('/categories/', data),
   update: (id: number, data: object) => api.put(`/categories/${id}/`, data),
   delete: (id: number) => api.delete(`/categories/${id}/`),
+  mergeInto: (sourceId: number, targetId: number) => api.post(`/categories/${sourceId}/merge_into/`, { target_id: targetId }),
+}
+
+// Category rules
+export const categoryRulesAPI = {
+  list: () => api.get('/category-rules/'),
+  create: (data: object) => api.post('/category-rules/', data),
+  delete: (id: number) => api.delete(`/category-rules/${id}/`),
+}
+
+// Envelopes (YNAB-style per-category budgets)
+export const envelopesAPI = {
+  list: (month: string) => api.get('/envelopes/', { params: { month } }),
+  upsert: (category: number, month: string, allocated: number) =>
+    api.post('/envelopes/upsert/', { category, month, allocated }),
 }
 
 // Transactions
@@ -88,9 +108,14 @@ export const transactionsAPI = {
   list: (params?: object) => api.get('/transactions/', { params }),
   create: (data: object) => api.post('/transactions/', data),
   update: (id: number, data: object) => api.put(`/transactions/${id}/`, data),
+  patch: (id: number, data: object) => api.patch(`/transactions/${id}/`, data),
   delete: (id: number) => api.delete(`/transactions/${id}/`),
   stats: (params?: object) => api.get('/transactions/stats/', { params }),
   insights: () => api.get('/transactions/insights/'),
+  recurringDetected: () => api.get('/transactions/recurring_detected/'),
+  recurringList: () => api.get('/transactions/', { params: { is_recurring: 'true', page_size: 200 } }),
+  scoreHistory: () => api.get('/transactions/score_history/'),
+  weekdayStats: (months = 3) => api.get(`/transactions/weekday_stats/?months=${months}`),
 }
 
 // Savings
@@ -119,9 +144,44 @@ export const goalsAPI = {
   cashflow: (months?: number) => api.get('/goals/cashflow/', { params: { months } }),
 }
 
+// Bank Accounts
+export const accountsAPI = {
+  list: () => api.get('/accounts/'),
+  create: (data: object) => api.post('/accounts/', data),
+  update: (id: number, data: object) => api.put(`/accounts/${id}/`, data),
+  delete: (id: number) => api.delete(`/accounts/${id}/`),
+  summary: () => api.get('/accounts/summary/'),
+  history: (id: number) => api.get(`/accounts/${id}/history/`),
+}
+
+// Notifications
+export const notificationsAPI = {
+  list: () => api.get('/notifications/'),
+  unreadCount: () => api.get('/notifications/unread_count/'),
+  markRead: (id: number) => api.post(`/notifications/${id}/mark_read/`),
+  markAllRead: () => api.post('/notifications/mark_all_read/'),
+}
+
 // Forecast
 export const forecastAPI = {
   budget: (months = 6) => api.get(`/forecast/budget/?months=${months}`),
+  simulate: (data: { reductions: Record<string, number>; extra_savings: number }) =>
+    api.post('/forecast/simulate/', data),
+  wants: () => api.get('/forecast/wants/'),
+  updateWantsScores: (scores: Record<string, number>) => api.post('/forecast/wants/', { scores }),
+}
+
+// Reconciliation
+export const reconciliationAPI = {
+  list: () => api.get('/reconciliation/'),
+  start: (month: string, csv_content: string) =>
+    api.post('/reconciliation/start/', { month, csv_content }),
+  matchManual: (sessionId: number, entry_id: number, transaction_id: number) =>
+    api.patch(`/reconciliation/${sessionId}/match_manual/`, { entry_id, transaction_id }),
+  ignoreEntry: (sessionId: number, entry_id: number) =>
+    api.patch(`/reconciliation/${sessionId}/ignore_entry/`, { entry_id }),
+  close: (sessionId: number) =>
+    api.post(`/reconciliation/${sessionId}/close/`),
 }
 
 // Documents
@@ -135,4 +195,8 @@ export const documentsAPI = {
   preview: (id: number) => api.get(`/documents/${id}/preview/`),
   import: (id: number, transactions: object[]) =>
     api.post(`/documents/${id}/import/`, { transactions }),
+  downloadPDF: (month: string) =>
+    api.get(`/documents/report/pdf/?month=${month}`, { responseType: 'blob' }),
+  downloadTemplate: (month: string) =>
+    api.get(`/documents/template/?month=${month}`, { responseType: 'blob' }),
 }

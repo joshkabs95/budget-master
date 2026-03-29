@@ -30,13 +30,42 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/health/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
     command: sh -c 'python manage.py migrate --noinput && python manage.py collectstatic --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120 --access-logfile - --error-logfile -'
+
+  # ── Redis (Celery broker) ───────────────────────────────
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  # ── Celery Worker ────────────────────────────────────────
+  celery:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - media_files:/app/media
+    depends_on:
+      - backend
+      - redis
+    command: sh -c 'celery -A config worker --loglevel=info --concurrency=2'
+
+  # ── Celery Beat (scheduler) ──────────────────────────────
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - media_files:/app/media
+    depends_on:
+      - backend
+      - redis
+    command: sh -c 'celery -A config beat --loglevel=info -s /tmp/celerybeat-schedule'
 
   # ── Nginx + React Frontend ──────────────────────────────
   nginx:
@@ -55,8 +84,7 @@ services:
       - certbot_var:/var/lib/letsencrypt:ro
       - certbot_webroot:/var/www/certbot:ro
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
 
   # ── Certbot (SSL) ───────────────────────────────────────
   certbot:
@@ -133,3 +161,4 @@ volumes:
   certbot_webroot:
   prometheus_data:
   grafana_data:
+  redis_data:

@@ -33,12 +33,32 @@ AUTO_RULES = {
 }
 
 
-def categorize_label(label: str) -> dict:
+def categorize_label(label: str, user=None) -> dict:
     """
     Returns best matching category info dict or None.
-    Uses lowercase + contains matching with confidence score.
+    Checks user-defined CategoryRules first, then falls back to AUTO_RULES.
     """
     label_lower = label.lower().strip()
+
+    # ── 1. User-defined rules (highest priority) ─────────────────────────────
+    if user is not None:
+        try:
+            from apps.categories.models import CategoryRule
+            for rule in CategoryRule.objects.filter(user=user).select_related('category').order_by('-priority', 'keyword'):
+                if rule.keyword.lower() in label_lower:
+                    cat = rule.category
+                    return {
+                        "name": cat.name,
+                        "icon": cat.icon,
+                        "color": cat.color,
+                        "rule_bucket": cat.rule_bucket,
+                        "confidence": 1.0,
+                        "category_id": cat.id,
+                    }
+        except Exception:
+            pass
+
+    # ── 2. Generic AUTO_RULES fallback ────────────────────────────────────────
     best_match = None
     best_score = 0
 

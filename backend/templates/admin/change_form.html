@@ -1,0 +1,11 @@
+{% extends "admin/change_form.html" %}
+
+{% block content_title %}
+  {% if original %}
+    <h1 style="color:#111;font-weight:700;font-size:1.6rem;letter-spacing:-0.02em;">
+      {{ original.get_full_name|default:original.username|default:original }}
+    </h1>
+  {% else %}
+    {{ block.super }}
+  {% endif %}
+{% endblock %}

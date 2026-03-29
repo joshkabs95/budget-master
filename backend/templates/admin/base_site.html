@@ -1,0 +1,8 @@
+{% extends "jazzmin/base_site.html" %}
+{% block extrahead %}
+{{ block.super }}
+<style>
+  .breadcrumb, ol.breadcrumb, nav[aria-label="breadcrumb"] { display: none !important; }
+  #jazzy-actions { display: none !important; }
+</style>
+{% endblock %}

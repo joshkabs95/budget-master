@@ -1,8 +1,11 @@
 from rest_framework import generics, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.http import HttpResponse
 from django.utils import timezone
+from datetime import date as _date
 
 from .models import Document
 from .serializers import DocumentSerializer
@@ -25,8 +28,18 @@ class DocumentPreviewView(APIView):
         except Document.DoesNotExist:
             return Response({"error": "Document non trouvé."}, status=404)
 
-        transactions = parse_file(doc.file.path, doc.file_type)
-        # Mark duplicates
+        categories, goals, scores = [], [], {}
+
+        if doc.file_type == 'xlsx':
+            from .services.excel_parser import parse_excel
+            result = parse_excel(doc.file.path)
+            transactions = result.get('transactions', [])
+            categories   = result.get('categories', [])
+            goals        = result.get('goals', [])
+            scores       = result.get('scores', {})
+        else:
+            transactions = parse_file(doc.file.path, doc.file_type)
+
         for t in transactions:
             t['is_duplicate'] = Transaction.objects.filter(import_hash=t['import_hash']).exists()
 
@@ -36,6 +49,9 @@ class DocumentPreviewView(APIView):
             "transactions": transactions,
             "total": len(transactions),
             "duplicates": sum(1 for t in transactions if t['is_duplicate']),
+            "categories": categories,
+            "goals": goals,
+            "scores": scores,
         })
 
 
@@ -73,6 +89,68 @@ class DocumentImportView(APIView):
             )
             imported += 1
 
+        # ── Import categories / goals / scores from xlsx ──────────────────
+        cats_created = goals_created = 0
+
+        if doc.file_type == 'xlsx':
+            from .services.excel_parser import parse_excel
+            from apps.categories.models import Category
+            from apps.goals.models import Goal
+            from apps.savings.models import SavingsRule
+            from datetime import datetime
+
+            full = parse_excel(doc.file.path)
+
+            for cat_data in full.get('categories', []):
+                _, created = Category.objects.get_or_create(
+                    user=request.user,
+                    name=cat_data['name'],
+                    defaults={
+                        'icon':         cat_data.get('icon', '📁'),
+                        'rule_bucket':  cat_data.get('bucket', 'wants'),
+                        'color':        '#64748b',
+                    }
+                )
+                if created:
+                    cats_created += 1
+
+            for goal_data in full.get('goals', []):
+                deadline = goal_data.get('deadline') or None
+                if deadline:
+                    try:
+                        datetime.strptime(deadline, '%Y-%m-%d')
+                    except ValueError:
+                        deadline = None
+                _, created = Goal.objects.get_or_create(
+                    user=request.user,
+                    name=goal_data['name'],
+                    defaults={
+                        'icon':           goal_data.get('icon', '🎯'),
+                        'target_amount':  goal_data['target_amount'],
+                        'current_amount': goal_data.get('current_amount', 0),
+                        'deadline':       deadline or '2025-12-31',
+                        'type':           goal_data.get('type', 'savings'),
+                        'color':          '#a855f7',
+                    }
+                )
+                if created:
+                    goals_created += 1
+
+            scores = full.get('scores', {})
+            if scores:
+                rule = SavingsRule.objects.filter(user=request.user, active=True).first()
+                if rule:
+                    # Map category names to IDs
+                    from apps.categories.models import Category as Cat
+                    id_scores = {}
+                    for cat_name, score in scores.items():
+                        cat_obj = Cat.objects.filter(user=request.user, name=cat_name).first()
+                        if cat_obj:
+                            id_scores[str(cat_obj.id)] = score
+                    if id_scores:
+                        rule.wants_scores = {**(rule.wants_scores or {}), **id_scores}
+                        rule.save(update_fields=['wants_scores'])
+
         doc.status = 'imported'
         doc.imported_at = timezone.now()
         doc.transaction_count = imported
@@ -81,5 +159,58 @@ class DocumentImportView(APIView):
         return Response({
             "imported": imported,
             "skipped": skipped,
-            "message": f"{imported} transaction(s) importée(s), {skipped} doublon(s) ignoré(s)."
+            "categories_created": cats_created,
+            "goals_created": goals_created,
+            "message": (
+                f"{imported} transaction(s) importée(s)"
+                + (f", {skipped} doublon(s) ignoré(s)" if skipped else "")
+                + (f", {cats_created} catégorie(s) créée(s)" if cats_created else "")
+                + (f", {goals_created} objectif(s) créé(s)" if goals_created else "")
+                + "."
+            ),
         })
+
+
+class TemplateDownloadView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        month = request.query_params.get('month')
+        if not month:
+            today = _date.today()
+            month = f"{today.year}-{today.month:02d}"
+        try:
+            from .services.excel_template import generate_template
+            xlsx_bytes = generate_template(month)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+
+        filename = f"budget_master_seed_{month}.xlsx"
+        response = HttpResponse(
+            xlsx_bytes,
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+
+class MonthlyReportPDFView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        month = request.query_params.get('month')
+        if not month:
+            from datetime import date
+            today = date.today()
+            month = f"{today.year}-{today.month:02d}"
+
+        try:
+            from .pdf_report import generate_monthly_report
+            pdf_bytes = generate_monthly_report(request.user, month)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+
+        filename = f"budget-master-{month}.pdf"
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

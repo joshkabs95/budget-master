@@ -1,0 +1,63 @@
+.page { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.5rem; }
+
+.pageHeader { padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
+
+.section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.375rem; }
+.sectionTitle { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.09em; margin-bottom: 1.125rem; }
+.hint { font-size: 0.8rem; color: var(--text-muted); margin: -0.5rem 0 1.25rem; }
+
+.fields { display: flex; flex-direction: column; gap: 1rem; }
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 0.4rem; }
+.label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.input { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.5rem 0.75rem; color: var(--text-primary); font-size: 0.875rem; outline: none; transition: border-color 0.15s; width: 100%; box-sizing: border-box; }
+.input:focus { border-color: var(--accent); }
+.fieldActions { display: flex; justify-content: flex-end; padding-top: 0.25rem; }
+
+/* Rule cards */
+.ruleGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+@media (max-width: 600px) { .ruleGrid { grid-template-columns: 1fr; } }
+
+.ruleCard {
+  background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 1rem; position: relative; overflow: hidden;
+}
+.ruleCard::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--rc, var(--accent)); }
+.ruleCardHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.ruleCardLabel { font-size: 0.8rem; font-weight: 700; }
+.ruleCardPct { font-size: 1.375rem; font-weight: 800; letter-spacing: -0.03em; }
+.slider { width: 100%; margin-bottom: 0.875rem; }
+
+.tolRow { display: flex; justify-content: space-between; align-items: center; }
+.tolLabel { font-size: 0.7rem; color: var(--text-muted); }
+.tolInputWrap { display: flex; align-items: center; gap: 0.25rem; }
+.tolInput { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.25rem 0.4rem; color: var(--text-primary); font-size: 0.8rem; width: 52px; outline: none; text-align: right; }
+.tolInput:focus { border-color: var(--accent); }
+.tolUnit { font-size: 0.75rem; color: var(--text-muted); }
+
+/* Total */
+.totalRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+.totalLabel { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.totalVal { font-size: 0.875rem; font-weight: 700; }
+
+/* Visual bar */
+.ruleBar { display: flex; height: 6px; border-radius: 3px; overflow: hidden; margin-bottom: 1.25rem; gap: 2px; }
+.ruleBar div { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+
+/* Mode */
+.modeRow { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.toggle { display: flex; gap: 0.375rem; }
+.toggleBtn { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.35rem 0.875rem; font-size: 0.8rem; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+.toggleBtn:hover { border-color: var(--border-hover); color: var(--text-secondary); }
+.toggleActive { background: rgba(0,212,170,0.1); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.modeHint { font-size: 0.8rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.4rem; }
+.inlineNum { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.2rem 0.4rem; color: var(--text-primary); font-size: 0.8rem; width: 44px; outline: none; text-align: center; }
+.inlineNum:focus { border-color: var(--accent); }
+
+.error { font-size: 0.8rem; color: var(--accent-red); margin-bottom: 0.75rem; }
+
+.btnSave { background: var(--accent); color: #000; border: none; border-radius: var(--radius-md); padding: 0.5rem 1.25rem; font-size: 0.875rem; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.btnSave:hover { background: var(--accent-hover); }
+.btnSave:disabled { opacity: 0.5; cursor: not-allowed; }

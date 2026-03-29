@@ -1,0 +1,88 @@
+{% load i18n %}
+<style>
+  .breadcrumb, ol.breadcrumb, nav[aria-label="breadcrumb"],
+  .breadcrumb-container { display: none !important; }
+  #jazzy-actions { display: none !important; }
+  th.delete, td.delete > label { display: none !important; }
+</style>
+
+<script>
+(function () {
+  function init () {
+    // ── Titre h1 ──────────────────────────────────────────────────────
+    var h1 = document.querySelector('h1')
+    if (h1) {
+      var fn = (document.querySelector('#id_first_name') || {}).value || ''
+      var ln = (document.querySelector('#id_last_name')  || {}).value || ''
+      var un = (document.querySelector('#id_username')   || {}).value || ''
+      var name = (fn + ' ' + ln).trim() || un
+      if (name) h1.textContent = name
+      h1.style.color      = '#111'
+      h1.style.fontWeight = '700'
+      h1.style.fontSize   = '1.6rem'
+    }
+
+    // ── Onglets : saut de ligne après le 4ème ─────────────────────────
+    var tabs  = document.querySelector('.change-form .nav-tabs, #content .nav-tabs')
+    if (tabs) {
+      var items = tabs.querySelectorAll(':scope > li')
+      if (items.length > 4 && !tabs.dataset.broken) {
+        tabs.dataset.broken = '1'
+        tabs.style.flexWrap = 'wrap'
+        var br = document.createElement('li')
+        br.setAttribute('aria-hidden', 'true')
+        br.style.cssText = 'flex-basis:100%;height:0;padding:0;margin:0;list-style:none;border:none;'
+        items[3].insertAdjacentElement('afterend', br)
+      }
+    }
+
+    // ── Checkboxes → boutons Supprimer ────────────────────────────────
+    document.querySelectorAll('.delete input[type="checkbox"]').forEach(function (cb) {
+      if (cb.dataset.upgraded) return
+      cb.dataset.upgraded = '1'
+      var btn = document.createElement('button')
+      btn.type = 'button'
+      btn.textContent = 'Supprimer'
+      btn.style.cssText = 'background:#ef4444;color:#fff;border:none;border-radius:6px;padding:4px 10px;font-size:.75rem;font-weight:600;cursor:pointer;'
+      btn.addEventListener('click', function () {
+        cb.checked = !cb.checked
+        var row = cb.closest('tr')
+        if (cb.checked) {
+          btn.textContent = 'Annuler'
+          btn.style.background = '#6b7280'
+          if (row) row.style.opacity = '.4'
+        } else {
+          btn.textContent = 'Supprimer'
+          btn.style.background = '#ef4444'
+          if (row) row.style.opacity = '1'
+        }
+      })
+      cb.style.display = 'none'
+      var cell = cb.closest('td, .delete')
+      ;(cell || cb.parentNode).insertBefore(btn, cb)
+    })
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init)
+  } else {
+    init()
+  }
+
+  // Relancer après ajout dynamique d'inline
+  document.addEventListener('click', function (e) {
+    if (e.target && e.target.closest && e.target.closest('.add-row')) {
+      setTimeout(init, 200)
+    }
+  })
+})()
+</script>
+
+<div class="submit-row d-flex gap-2 p-3">
+  {% if show_save %}
+    <input type="submit" value="{% trans 'Enregistrer' %}" class="btn btn-success" name="_save">
+  {% endif %}
+  {% if show_delete_link %}
+    <a href="{{ delete_url }}" class="btn btn-danger">{% trans "Supprimer" %}</a>
+  {% endif %}
+</div>

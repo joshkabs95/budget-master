@@ -9,6 +9,7 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django_prometheus',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -27,6 +28,9 @@ INSTALLED_APPS = [
     'apps.goals',
     'apps.documents',
     'apps.forecasting',
+    'apps.notifications',
+    'apps.reconciliation',
+    'apps.accounts',
 ]
 
 MIDDLEWARE = [
@@ -47,9 +51,13 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
+        'DIRS': [BASE_DIR / 'templates'],
+        'APP_DIRS': False,
         'OPTIONS': {
+            'loaders': [
+                'django.template.loaders.filesystem.Loader',
+                'django.template.loaders.app_directories.Loader',
+            ],
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
@@ -97,7 +105,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = []  # assets served directly from FRONTEND_DIR
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -124,7 +132,15 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 20,
+    'PAGE_SIZE': 200,
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '30/minute',
+        'user': '300/minute',
+    },
 }
 
 SIMPLE_JWT = {
@@ -132,4 +148,149 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+}
+
+# ── Celery ──────────────────────────────────────────────────────────────────
+CELERY_BROKER_URL = config('REDIS_URL', default='redis://redis:6379/0')
+CELERY_RESULT_BACKEND = config('REDIS_URL', default='redis://redis:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+
+from celery.schedules import crontab  # noqa: E402
+
+CELERY_BEAT_SCHEDULE = {
+    'spawn-recurring-1st-of-month': {
+        'task': 'apps.notifications.tasks.spawn_recurring_transactions',
+        'schedule': crontab(hour=6, minute=0, day_of_month=1),
+    },
+    'daily-budget-check': {
+        'task': 'apps.notifications.tasks.daily_budget_check',
+        'schedule': crontab(hour=8, minute=0),
+    },
+    'monthly-recap-last-day': {
+        'task': 'apps.notifications.tasks.monthly_recap',
+        'schedule': crontab(hour=20, minute=0, day_of_month='28-31'),
+    },
+}
+
+# ── Email ───────────────────────────────────────────────────────────────────
+EMAIL_BACKEND = config('EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='Budget Master <noreply@budgetmaster.app>')
+
+# ── Jazzmin (Admin UI) ───────────────────────────────────────────────────────
+JAZZMIN_SETTINGS = {
+    # Titre de l'onglet navigateur
+    "site_title": "Budget Master Admin",
+    "site_header": "Budget Master",
+    "site_brand": "BudgetMaster",
+    "welcome_sign": "Bienvenue sur le panneau d'administration",
+    "copyright": "Budget Master",
+
+    # Icône dans la barre latérale (FontAwesome 5)
+    "site_icon": None,
+    "site_logo": None,
+    "site_logo_classes": None,
+
+    # Lien vers le site principal
+    "site_url": "/",
+
+    # Champ de recherche global (modèles fouillés)
+    "search_model": ["users.User", "transactions.Transaction"],
+
+    # Masquer les modèles dans la sidebar
+    "hide_apps": [],
+    "hide_models": [],
+
+    # Ordre de la sidebar
+    "order_with_respect_to": [
+        "users",
+        "transactions",
+        "categories",
+        "savings",
+        "goals",
+        "notifications",
+        "documents",
+    ],
+
+    # Icônes par app/modèle
+    "icons": {
+        "auth":                          "fas fa-shield-alt",
+        "users.user":                    "fas fa-user-circle",
+        "transactions.transaction":      "fas fa-exchange-alt",
+        "categories.category":           "fas fa-tags",
+        "savings.savingsaccount":        "fas fa-piggy-bank",
+        "savings.savingsrule":           "fas fa-sliders-h",
+        "goals.goal":                    "fas fa-bullseye",
+        "notifications.notification":    "fas fa-bell",
+        "documents.document":            "fas fa-file-invoice",
+        "token_blacklist.blacklistedtoken":  "fas fa-ban",
+        "token_blacklist.outstandingtoken":  "fas fa-key",
+    },
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-circle",
+
+    # Liens rapides en haut à droite
+    "topmenu_links": [
+        {"name": "Accueil", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Application", "url": "/", "new_window": True},
+        {"model": "users.user"},
+    ],
+
+    # Liens dans la barre latérale (section utilisateur connecté)
+    "usermenu_links": [
+        {"model": "users.user"},
+    ],
+
+    # UI options
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "users.user": "horizontal_tabs",
+    },
+
+    # CSS / JS personnalisés
+    "custom_css": "admin/css/custom_admin.css",
+    "custom_js": "admin/js/custom_admin.js",
+
+    # Langue / i18n
+    "language_chooser": False,
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "navbar_small_text": False,
+    "footer_small_text": False,
+    "body_small_text": False,
+    "brand_small_text": False,
+    "brand_colour": "navbar-dark",
+    "accent": "accent-primary",
+    "navbar": "navbar-dark",
+    "no_navbar_border": True,
+    "navbar_fixed": True,
+    "layout_boxed": False,
+    "footer_fixed": False,
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark-primary",
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+    "theme": "darkly",       # thème Bootswatch sombre
+    "dark_mode_theme": "darkly",
+    "button_classes": {
+        "primary":   "btn-primary",
+        "secondary": "btn-secondary",
+        "info":      "btn-info",
+        "warning":   "btn-warning",
+        "danger":    "btn-danger",
+        "success":   "btn-success",
+    },
 }

@@ -78,6 +78,12 @@
 .navIcon { flex-shrink: 0; }
 .navLabel { line-height: 1; }
 
+/* ── Notification row ── */
+.notifRow {
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
 /* ── Footer ── */
 .footer {
   padding: 0.875rem 1.25rem;

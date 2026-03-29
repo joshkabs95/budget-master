@@ -50,6 +50,7 @@ class SavingsRule(models.Model):
     catchup_max_months = models.IntegerField(default=3)
     mode = models.CharField(max_length=10, choices=MODE_CHOICES, default='adaptive')
     active = models.BooleanField(default=True)
+    wants_scores = models.JSONField(default=dict, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

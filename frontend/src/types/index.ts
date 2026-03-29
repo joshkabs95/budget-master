@@ -6,6 +6,7 @@ export interface User {
   last_name?: string
   locale: string
   currency: string
+  onboarding_done: boolean
 }
 
 export interface AuthTokens {
@@ -24,17 +25,80 @@ export interface Category {
   created_at: string
 }
 
+export interface ReconciliationEntry {
+  id: number
+  transaction: number | null
+  transaction_detail: Transaction | null
+  bank_date: string | null
+  bank_label: string
+  bank_amount: string | null
+  status: 'auto' | 'manual' | 'unmatched_app' | 'unmatched_bank'
+  match_score: number
+}
+
+export interface ReconciliationStats {
+  total: number
+  auto: number
+  manual: number
+  unmatched_app: number
+  unmatched_bank: number
+  matched_pct: number
+}
+
+export interface ReconciliationSession {
+  id: number
+  month: string
+  status: 'open' | 'closed'
+  created_at: string
+  closed_at: string | null
+  entries: ReconciliationEntry[]
+  stats: ReconciliationStats
+}
+
+export interface Envelope {
+  id: number
+  category: number
+  category_detail: Category
+  month: string
+  allocated: number
+  carried_over: number
+  spent: number
+  remaining: number
+}
+
+export interface BankAccount {
+  id: number
+  name: string
+  bank_name: string
+  account_type: 'checking' | 'joint' | 'pro' | 'other'
+  initial_balance: number
+  color: string
+  icon: string
+  is_default: boolean
+  balance: number
+  transaction_count: number
+  created_at: string
+}
+
 export interface Transaction {
   id: number
   category: number | null
   category_detail: Category | null
   savings_account: number | null
+  bank_account: number | null
+  bank_account_detail: { id: number; name: string; icon: string; color: string } | null
   amount: string
   label: string
   date: string
   type: 'income' | 'expense' | 'saving'
   source: 'manual' | 'import'
   import_hash: string | null
+  notes: string
+  is_recurring: boolean
+  recurrence: 'monthly' | 'weekly' | 'yearly' | ''
+  goal: number | null
+  goal_name: string | null
+  goal_icon: string | null
   created_at: string
 }
 
@@ -148,6 +212,44 @@ export interface TransactionStats {
     total: number
   }>
   trend: Array<{ month: string; type: string; total: number }>
+  risk: 'low' | 'medium' | 'high'
+}
+
+export interface ScoreMonth {
+  month: string
+  score: number
+  savings_rate: number
+  income: number
+  expenses: number
+}
+
+export interface SimulationResult {
+  before: {
+    income: number; expenses: number; savings: number; balance: number
+    rule_503020: { needs: number; wants: number; savings: number }
+    risk: 'low' | 'medium' | 'high'
+    by_category: Array<{ id: number; name: string; icon: string; color: string; bucket: string; total: number }>
+  }
+  after: {
+    income: number; expenses: number; savings: number; balance: number
+    rule_503020: { needs: number; wants: number; savings: number }
+    risk: 'low' | 'medium' | 'high'
+  }
+  impact: {
+    expense_reduction: number; savings_gain: number; balance_delta: number
+    savings_rate_before: number; savings_rate_after: number; risk_change: string
+  }
+}
+
+export interface RecurringPattern {
+  label: string
+  category: string
+  category_icon: string
+  type: 'income' | 'expense'
+  avg_amount: number
+  months_seen: number
+  frequency: string
+  confidence: 'high' | 'medium'
 }
 
 export interface SavingsSummary {
@@ -201,4 +303,23 @@ export interface ParsedTransaction {
   import_hash: string
   is_duplicate: boolean
   category?: string
+}
+
+export interface WantsEnvelope {
+  category_id: number
+  label: string
+  icon: string
+  score: number
+  weight_pct: number
+  envelope: number
+  spent: number
+  remaining: number
+  status: 'green' | 'yellow' | 'red'
+}
+
+export interface WantsData {
+  wants_budget: number
+  income: number
+  wants_pct: number
+  envelopes: WantsEnvelope[]
 }

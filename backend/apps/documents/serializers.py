@@ -16,4 +16,6 @@ class DocumentSerializer(serializers.ModelSerializer):
                 validated_data['file_type'] = 'pdf'
             elif name.endswith('.csv'):
                 validated_data['file_type'] = 'csv'
+            elif name.endswith('.xlsx'):
+                validated_data['file_type'] = 'xlsx'
         return super().create(validated_data)

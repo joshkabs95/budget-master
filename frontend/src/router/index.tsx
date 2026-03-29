@@ -6,7 +6,12 @@ import Transactions from '../pages/Transactions'
 import Budget from '../pages/Budget'
 import Savings from '../pages/Savings'
 import Analytics from '../pages/Analytics'
-import Goals from '../pages/Goals'
+import Reconciliation from '../pages/Reconciliation'
+import Categories from '../pages/Categories'
+import Accounts from '../pages/Accounts'
+import Recurring from '../pages/Recurring'
+import Profile from '../pages/Profile'
+import Notifications from '../pages/Notifications'
 import Login from '../pages/Auth/Login'
 import Register from '../pages/Auth/Register'
 
@@ -36,7 +41,13 @@ export default function AppRouter() {
           <Route path="/budget" element={<Budget />} />
           <Route path="/savings" element={<Savings />} />
           <Route path="/analytics" element={<Analytics />} />
-          <Route path="/goals" element={<Goals />} />
+          <Route path="/reconciliation" element={<Reconciliation />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/accounts" element={<Accounts />} />
+          <Route path="/recurring" element={<Recurring />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/notifications" element={<Notifications />} />
+          <Route path="/goals" element={<Navigate to="/savings" replace />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

@@ -2,9 +2,10 @@ import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   LayoutDashboard, ArrowLeftRight, PieChart,
-  Wallet, TrendingUp, Target, LogOut
+  Wallet, TrendingUp, LogOut, GitMerge, Tag, Settings, Building2, RefreshCw, Bell
 } from 'lucide-react'
 import styles from './Sidebar.module.css'
+import NotificationBell from '../NotificationBell/NotificationBell'
 
 const NAV = [
   { to: '/',             icon: LayoutDashboard, label: 'Dashboard' },
@@ -12,7 +13,12 @@ const NAV = [
   { to: '/budget',       icon: PieChart,        label: 'Budget' },
   { to: '/savings',      icon: Wallet,          label: 'Épargne' },
   { to: '/analytics',    icon: TrendingUp,      label: 'Analytics' },
-  { to: '/goals',        icon: Target,          label: 'Objectifs' },
+  { to: '/accounts',       icon: Building2,     label: 'Comptes' },
+  { to: '/recurring',      icon: RefreshCw,     label: 'Récurrentes' },
+  { to: '/reconciliation', icon: GitMerge,      label: 'Réconciliation' },
+  { to: '/categories',     icon: Tag,           label: 'Catégories' },
+  { to: '/notifications',   icon: Bell,          label: 'Notifications' },
+  { to: '/profile',         icon: Settings,      label: 'Profil' },
 ]
 
 export default function Sidebar() {
@@ -37,6 +43,10 @@ export default function Sidebar() {
           </NavLink>
         ))}
       </nav>
+
+      <div className={styles.notifRow}>
+        <NotificationBell />
+      </div>
 
       <div className={styles.footer}>
         <div className={styles.user}>

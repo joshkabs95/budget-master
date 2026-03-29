@@ -29,11 +29,16 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('apps.users.urls')),
     path('api/categories/', include('apps.categories.urls')),
+    path('api/category-rules/', include('apps.categories.rules_urls')),
+    path('api/envelopes/', include('apps.categories.envelope_urls')),
     path('api/transactions/', include('apps.transactions.urls')),
     path('api/savings/', include('apps.savings.urls')),
     path('api/goals/', include('apps.goals.urls')),
     path('api/documents/', include('apps.documents.urls')),
     path('api/forecast/', include('apps.forecasting.urls')),
+    path('api/notifications/', include('apps.notifications.urls')),
+    path('api/reconciliation/', include('apps.reconciliation.urls')),
+    path('api/accounts/', include('apps.accounts.urls')),
     # Serve frontend static assets
     re_path(r'^assets/(?P<path>.+)$', serve_static_asset),
     # Catch-all → React index.html (client-side routing)

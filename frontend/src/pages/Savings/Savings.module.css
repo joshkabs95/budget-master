@@ -1,7 +1,12 @@
 .page { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
 
-.header { padding-bottom: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.header { padding-bottom: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
+
+.tabs { display: flex; gap: 0.25rem; background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 3px; }
+.tab { background: transparent; border: none; border-radius: calc(var(--radius-md) - 2px); padding: 0.4rem 0.875rem; font-size: 0.8125rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+.tab:hover { color: var(--text-primary); }
+.tabActive { background: var(--bg-surface); color: var(--text-primary); font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
 
 .btnPrimary { background: var(--accent); color: #000; border: none; border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem; transition: background 0.15s; }
 .btnPrimary:hover { background: var(--accent-hover); }
@@ -34,6 +39,68 @@
 .accBalance { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.025em; }
 .accTarget { font-size: 0.75rem; color: var(--text-muted); }
 .accContrib { font-size: 0.8rem; color: var(--accent-green); font-weight: 500; }
+
+/* Card actions (edit/delete) */
+.accActions {
+  position: absolute; top: 0.625rem; right: 0.625rem;
+  display: flex; gap: 0.25rem; opacity: 0; transition: opacity 0.15s;
+}
+.accCard:hover .accActions { opacity: 1; }
+.accBtn {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  color: var(--text-muted); font-size: 0.75rem; width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s;
+}
+.accBtn:hover { color: var(--text-primary); border-color: var(--border-hover); }
+
+.empty { font-size: 0.875rem; color: var(--text-muted); padding: 2rem; text-align: center; }
+
+/* Modal */
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: center; justify-content: center; z-index: 100;
+}
+.modal {
+  background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px;
+  padding: 1.5rem; width: min(480px, 95vw); max-height: 85vh; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1.25rem;
+}
+.modalTitle { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.modalFooter { display: flex; justify-content: flex-end; gap: 0.625rem; margin-top: 0.25rem; }
+
+.fieldRow { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+@media (max-width: 400px) { .fieldRow { grid-template-columns: 1fr; } }
+
+/* Pickers */
+.pickerRow { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+.pickerItem {
+  background: var(--bg-elevated); border: 2px solid transparent; border-radius: var(--radius-sm);
+  font-size: 1.1rem; width: 36px; height: 36px; cursor: pointer; transition: border-color 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.pickerItem:hover { border-color: var(--border-hover); }
+.pickerActive { border-color: var(--accent) !important; }
+
+.colorDot {
+  width: 26px; height: 26px; border-radius: 50%; border: 3px solid transparent; cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.colorDot:hover { transform: scale(1.15); }
+.colorDotActive { border-color: white; transform: scale(1.15); }
+
+.btnDanger {
+  background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btnDanger:hover { opacity: 0.8; }
+
+.btnGhost {
+  background: transparent; color: var(--text-muted); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-size: 0.8125rem;
+  cursor: pointer; transition: color 0.15s, border-color 0.15s;
+}
+.btnGhost:hover { color: var(--text-primary); border-color: var(--border-hover); }
 
 .form { display: flex; flex-direction: column; gap: 1rem; }
 .field { display: flex; flex-direction: column; gap: 0.35rem; }

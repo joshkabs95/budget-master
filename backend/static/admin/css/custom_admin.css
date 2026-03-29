@@ -1,0 +1,27 @@
+/* ── Masquer l'en-tête "Supprimer ?" des inlines ── */
+th.delete, td.delete > label { display: none !important; }
+
+/* ── Bloc d'actions Jazzmin en bas ── */
+#jazzy-actions {
+    display: none !important;
+}
+
+/* ── Breadcrumb en haut à droite ── */
+.breadcrumb-container,
+nav.breadcrumb,
+ol.breadcrumb,
+.breadcrumb {
+    display: none !important;
+}
+
+/* ── Cache la colonne d'actions flottante à droite ── */
+.col-12.col-lg-3.order-last {
+    display: none !important;
+}
+
+/* ── Le formulaire prend toute la largeur ── */
+.col-12.col-lg-9 {
+    max-width: 100% !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+}

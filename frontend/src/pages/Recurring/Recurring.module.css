@@ -1,0 +1,102 @@
+.page { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
+
+.header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.title { font-size: 1.375rem; font-weight: 700; letter-spacing: -0.02em; }
+
+.btnPrimary { background: var(--accent); color: #000; border: none; border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem; cursor: pointer; transition: background 0.15s; }
+.btnPrimary:hover { background: var(--accent-hover); }
+.btnPrimary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btnGhost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-size: 0.8125rem; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
+.btnGhost:hover { color: var(--text-primary); border-color: var(--border-hover); }
+
+.btnDanger { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); border-radius: var(--radius-md); padding: 0.575rem 1.125rem; font-weight: 600; font-size: 0.8125rem; cursor: pointer; transition: opacity 0.15s; }
+.btnDanger:hover { opacity: 0.8; }
+
+.section { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.375rem; }
+
+.sectionTitle {
+  font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.sectionBadge {
+  background: var(--bg-elevated); color: var(--text-muted); border-radius: 99px;
+  padding: 1px 7px; font-size: 0.7rem; font-weight: 700;
+}
+.sectionDesc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+
+/* Pattern cards */
+.patternGrid { display: flex; flex-direction: column; gap: 0.625rem; }
+
+.patternCard {
+  background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md);
+  padding: 0.875rem 1rem; display: flex; flex-direction: column; gap: 0.625rem;
+  transition: border-color 0.15s;
+}
+.patternCard:hover { border-color: var(--border-hover); }
+
+.patternTop { display: flex; align-items: center; gap: 0.75rem; }
+.patternIcon { font-size: 1.25rem; flex-shrink: 0; width: 28px; text-align: center; }
+.patternInfo { flex: 1; min-width: 0; }
+.patternLabel { font-size: 0.875rem; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.patternMeta { font-size: 0.72rem; color: var(--text-muted); margin-top: 2px; }
+
+.confidenceBadge { font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; white-space: nowrap; }
+.confHigh { background: rgba(34,197,94,0.12); color: #22c55e; }
+.confMed  { background: rgba(251,146,60,0.12); color: #fb923c; }
+
+.patternBottom { display: flex; align-items: center; justify-content: space-between; }
+.patternAmt { font-size: 0.9rem; font-weight: 700; color: var(--text-primary); }
+.patternFreq { font-size: 0.78rem; color: var(--text-muted); }
+
+.btnConfirm { background: rgba(45,212,191,0.1); color: var(--accent); border: 1px solid rgba(45,212,191,0.25); border-radius: var(--radius-sm); padding: 0.3rem 0.875rem; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: background 0.15s, border-color 0.15s; white-space: nowrap; }
+.btnConfirm:hover { background: rgba(45,212,191,0.18); border-color: var(--accent); }
+
+/* Confirmed table */
+.table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.75rem; }
+.table th { background: var(--bg-elevated); color: var(--text-muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 0.875rem; text-align: left; font-weight: 600; }
+.table td { padding: 0.65rem 0.875rem; border-top: 1px solid var(--border); color: var(--text-primary); vertical-align: middle; }
+.table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.txnLabel { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; }
+.txnIcon { font-size: 1rem; }
+.txnCat { font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; padding-left: 1.5rem; }
+
+.typeBadge { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.7rem; font-weight: 600; }
+.type_expense { background: rgba(239,68,68,0.12); color: #ef4444; }
+.type_income  { background: rgba(34,197,94,0.12);  color: #22c55e; }
+.type_saving  { background: rgba(59,130,246,0.12); color: #60a5fa; }
+
+.amtIncome  { font-weight: 700; color: #22c55e; white-space: nowrap; }
+.amtExpense { font-weight: 700; color: #ef4444; white-space: nowrap; }
+
+.nextDate { font-size: 0.8rem; color: var(--text-secondary); }
+
+.btnRemove { background: none; border: none; color: var(--text-muted); font-size: 0.8rem; cursor: pointer; padding: 4px 6px; border-radius: var(--radius-sm); transition: color 0.15s, background 0.15s; }
+.btnRemove:hover { color: #ef4444; background: rgba(239,68,68,0.1); }
+
+.empty { font-size: 0.875rem; color: var(--text-muted); text-align: center; padding: 2rem; }
+
+/* Modal */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; }
+.modal { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; width: min(480px, 95vw); max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column; gap: 1.25rem; }
+.modalTitle { font-size: 1rem; font-weight: 700; color: var(--text-primary); }
+.modalFooter { display: flex; justify-content: flex-end; gap: 0.625rem; }
+
+.form { display: flex; flex-direction: column; gap: 0.875rem; }
+.field { display: flex; flex-direction: column; gap: 0.35rem; }
+.field label { font-size: 0.72rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+.fieldRow { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+@media (max-width: 420px) { .fieldRow { grid-template-columns: 1fr; } }
+
+.input { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 0.65rem 0.875rem; color: var(--text-primary); font-size: 0.875rem; width: 100%; box-sizing: border-box; }
+.input:focus { outline: none; border-color: var(--accent); }
+
+@media (max-width: 768px) {
+  .page { gap: 1.25rem; }
+  .title { font-size: 1.125rem; }
+  .section { padding: 1rem; }
+  .table { font-size: 0.78rem; }
+  .table th, .table td { padding: 0.5rem 0.625rem; }
+}
