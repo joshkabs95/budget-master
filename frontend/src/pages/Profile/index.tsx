@@ -213,14 +213,22 @@ export default function Profile() {
         <h2 className={styles.sectionTitle}>Sauvegarde des données</h2>
         <p className={styles.hint}>Télécharge une copie de toutes tes données (transactions, catégories, objectifs) au format JSON.</p>
         <div className={styles.fieldActions}>
-          <a
-            href="/api/users/export-backup/"
-            download
+          <button
             className={styles.btnSave}
-            style={{ display: 'inline-block', textDecoration: 'none', textAlign: 'center' }}
+            onClick={async () => {
+              const token = localStorage.getItem('access_token')
+              const res = await fetch('/api/users/export-backup/', { headers: { Authorization: `Bearer ${token}` } })
+              const blob = await res.blob()
+              const url = URL.createObjectURL(blob)
+              const a = document.createElement('a')
+              a.href = url
+              a.download = `budget_backup_${new Date().toISOString().slice(0, 10)}.json`
+              a.click()
+              URL.revokeObjectURL(url)
+            }}
           >
             ⬇ Exporter les données (JSON)
-          </a>
+          </button>
         </div>
       </section>
 
