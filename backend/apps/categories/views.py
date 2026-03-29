@@ -1,7 +1,9 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Sum
+from django.db.models import Sum, Q, DecimalField
+from django.db.models.functions import Coalesce
+from datetime import date
 from .models import Category, CategoryBudget, CategoryRule
 from .serializers import CategorySerializer, CategoryBudgetSerializer, CategoryRuleSerializer
 from apps.transactions.models import Transaction
@@ -11,7 +13,22 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
 
     def get_queryset(self):
-        return Category.objects.filter(user=self.request.user)
+        today = date.today()
+        month_str = f"{today.year}-{today.month:02d}"
+        return Category.objects.filter(user=self.request.user).annotate(
+            _month_spending=Coalesce(
+                Sum(
+                    'transaction__amount',
+                    filter=Q(
+                        transaction__user=self.request.user,
+                        transaction__date__startswith=month_str,
+                        transaction__type='expense',
+                    ),
+                ),
+                0,
+                output_field=DecimalField(),
+            )
+        )
 
     @action(detail=True, methods=['post'])
     def merge_into(self, request, pk=None):
@@ -43,7 +60,20 @@ class CategoryBudgetViewSet(viewsets.ModelViewSet):
         qs = CategoryBudget.objects.filter(user=self.request.user).select_related('category')
         month = self.request.query_params.get('month')
         if month:
-            qs = qs.filter(month=month)
+            qs = qs.filter(month=month).annotate(
+                _spent=Coalesce(
+                    Sum(
+                        'category__transaction__amount',
+                        filter=Q(
+                            category__transaction__user=self.request.user,
+                            category__transaction__date__startswith=month,
+                            category__transaction__type='expense',
+                        ),
+                    ),
+                    0,
+                    output_field=DecimalField(),
+                )
+            )
         return qs
 
     def list(self, request, *args, **kwargs):

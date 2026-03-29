@@ -19,7 +19,7 @@ class TransactionViewSet(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
 
     def get_queryset(self):
-        qs = Transaction.objects.filter(user=self.request.user).select_related('category', 'savings_account', 'bank_account').order_by('-date', '-id')
+        qs = Transaction.objects.filter(user=self.request.user).select_related('category', 'savings_account', 'bank_account', 'goal').order_by('-date', '-id')
         month = self.request.query_params.get('month')
         category = self.request.query_params.get('category')
         txn_type = self.request.query_params.get('type')

@@ -17,6 +17,8 @@ class CategorySerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def get_month_spending(self, obj):
+        if hasattr(obj, '_month_spending'):
+            return float(obj._month_spending)
         from datetime import date
         today = date.today()
         month_str = f"{today.year}-{today.month:02d}"
@@ -40,6 +42,8 @@ class CategoryBudgetSerializer(serializers.ModelSerializer):
         read_only_fields = ['carried_over']
 
     def get_spent(self, obj):
+        if hasattr(obj, '_spent'):
+            return float(obj._spent)
         result = Transaction.objects.filter(
             user=obj.user,
             category=obj.category,

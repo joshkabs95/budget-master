@@ -12,7 +12,7 @@ class GoalViewSet(viewsets.ModelViewSet):
     serializer_class = GoalSerializer
 
     def get_queryset(self):
-        qs = Goal.objects.filter(user=self.request.user)
+        qs = Goal.objects.filter(user=self.request.user).select_related('savings_account')
         goal_type = self.request.query_params.get('type')
         horizon = self.request.query_params.get('horizon')
         if goal_type:
