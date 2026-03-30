@@ -6,7 +6,36 @@ interface Props {
   onDone: () => void
 }
 
-const STEPS = ['Bienvenue', 'Règle budgétaire', 'Première catégorie']
+const STEPS = ['Bienvenue', 'Règle budgétaire', 'Catégories']
+
+// Miroir des catégories par défaut du backend (defaults.py)
+const DEFAULT_CATS = [
+  { name: 'Logement',       icon: '🏠', bucket: 'needs'   },
+  { name: 'Alimentation',   icon: '🛒', bucket: 'needs'   },
+  { name: 'Transport',      icon: '⛽', bucket: 'needs'   },
+  { name: 'Énergie',        icon: '⚡', bucket: 'needs'   },
+  { name: 'Santé',          icon: '💊', bucket: 'needs'   },
+  { name: 'Téléphonie',     icon: '📞', bucket: 'needs'   },
+  { name: 'Assurances',     icon: '🛡️', bucket: 'needs'   },
+  { name: 'Crédit',         icon: '💳', bucket: 'needs'   },
+  { name: 'Formation',      icon: '🎓', bucket: 'needs'   },
+  { name: 'Enfants',        icon: '👶', bucket: 'needs'   },
+  { name: 'Loisirs',        icon: '🎬', bucket: 'wants'   },
+  { name: 'Sorties',        icon: '🍽️', bucket: 'wants'   },
+  { name: 'Shopping',       icon: '👗', bucket: 'wants'   },
+  { name: 'Abonnements',    icon: '📱', bucket: 'wants'   },
+  { name: 'Bien-être',      icon: '💆', bucket: 'wants'   },
+  { name: 'Voyages',        icon: '✈️', bucket: 'wants'   },
+  { name: 'Cadeaux / Dons', icon: '🎁', bucket: 'wants'   },
+  { name: 'Épargne',        icon: '💰', bucket: 'savings' },
+  { name: 'Investissement', icon: '📈', bucket: 'savings' },
+]
+
+const BUCKETS = [
+  { key: 'needs',   label: 'Besoins',  color: '#60A5FA' },
+  { key: 'wants',   label: 'Envies',   color: '#A78BFA' },
+  { key: 'savings', label: 'Épargne',  color: '#34D399' },
+]
 
 export default function OnboardingWizard({ onDone }: Props) {
   const [step, setStep] = useState(0)
@@ -43,7 +72,7 @@ export default function OnboardingWizard({ onDone }: Props) {
 
   return (
     <div className={styles.overlay}>
-      <div className={styles.wizard}>
+      <div className={`${styles.wizard} ${step === 2 ? styles.wizardWide : ''}`}>
         {/* Progress */}
         <div className={styles.progress}>
           {STEPS.map((s, i) => (
@@ -120,23 +149,46 @@ export default function OnboardingWizard({ onDone }: Props) {
           </div>
         )}
 
-        {/* Step 2 — Première catégorie */}
+        {/* Step 2 — Catégories par défaut */}
         {step === 2 && (
           <div className={styles.body}>
             <div className={styles.emoji}>🏷️</div>
-            <h2 className={styles.title}>Votre première catégorie</h2>
-            <p className={styles.hint}>Créez une catégorie pour classifier vos dépenses (ex: Alimentation, Loyer…)</p>
+            <h2 className={styles.title}>Vos catégories prêtes</h2>
+            <p className={styles.hint}>
+              Ces catégories sont déjà créées dans votre espace.
+              Cliquez sur une pour la sélectionner comme principale, ou saisissez-en une personnalisée.
+            </p>
+
+            {BUCKETS.map(({ key, label, color }) => (
+              <div key={key} className={styles.bucketSection}>
+                <span className={styles.bucketLabel} style={{ color }}>{label}</span>
+                <div className={styles.chipGrid}>
+                  {DEFAULT_CATS.filter(c => c.bucket === key).map(cat => (
+                    <button
+                      key={cat.name}
+                      className={`${styles.chip} ${catName === cat.name ? styles.chipSelected : ''}`}
+                      style={catName === cat.name ? { borderColor: color, color } : {}}
+                      onClick={() => setCatName(catName === cat.name ? '' : cat.name)}
+                      type="button"
+                    >
+                      <span>{cat.icon}</span> {cat.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+
             <div className={styles.field}>
-              <label className={styles.label}>Nom de la catégorie</label>
+              <label className={styles.label}>Ou ajouter une catégorie personnalisée</label>
               <input
                 className={styles.input}
                 type="text"
-                placeholder="ex: Alimentation"
-                value={catName}
+                placeholder="ex: Animaux, Bricolage…"
+                value={DEFAULT_CATS.some(c => c.name === catName) ? '' : catName}
                 onChange={e => setCatName(e.target.value)}
-                autoFocus
               />
             </div>
+
             <div className={styles.footer}>
               <button className={styles.btnBack} onClick={() => setStep(1)}>← Retour</button>
               <button className={styles.btnNext} onClick={finish} disabled={saving}>
