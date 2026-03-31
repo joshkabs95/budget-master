@@ -99,4 +99,18 @@
 .del:hover { color: var(--accent-red); }
 
 .rowSelected { background: rgba(45, 212, 191, 0.08) !important; border-color: rgba(45, 212, 191, 0.3) !important; }
+.rowConfirm { background: rgba(239, 68, 68, 0.06) !important; border-color: rgba(239, 68, 68, 0.25) !important; }
 .bulkCheck { width: 15px; height: 15px; flex-shrink: 0; accent-color: var(--accent); cursor: pointer; }
+
+.confirmRow { display: flex; align-items: center; gap: 0.375rem; flex-shrink: 0; }
+.confirmLabel { font-size: 0.72rem; color: var(--accent-red); white-space: nowrap; }
+.confirmYes {
+  background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3);
+  border-radius: var(--radius-sm); padding: 2px 8px; font-size: 0.72rem; font-weight: 600; cursor: pointer;
+}
+.confirmYes:hover { background: rgba(239,68,68,0.25); }
+.confirmNo {
+  background: var(--bg-elevated); color: var(--text-muted); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 2px 8px; font-size: 0.72rem; cursor: pointer;
+}
+.confirmNo:hover { color: var(--text-primary); }

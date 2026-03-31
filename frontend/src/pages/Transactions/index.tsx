@@ -138,8 +138,13 @@ export default function Transactions() {
   }
 
   const onDelete = async (id: number) => {
-    await transactionsAPI.delete(id)
-    load()
+    try {
+      await transactionsAPI.delete(id)
+      toast('Transaction supprimée', 'info')
+      load()
+    } catch {
+      toast('Erreur lors de la suppression', 'error')
+    }
   }
 
   const openEdit = (t: Transaction) => {

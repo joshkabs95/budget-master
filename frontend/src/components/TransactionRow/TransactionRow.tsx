@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Transaction } from '../../types'
 import styles from './TransactionRow.module.css'
 
@@ -14,11 +15,12 @@ const TYPE_COLORS = { income: 'var(--accent-green)', expense: 'var(--accent-red)
 const RECURRENCE_LABEL = { monthly: 'mensuel', weekly: 'hebdo', yearly: 'annuel' }
 
 export default function TransactionRow({ transaction: t, onDelete, onEdit, bulkMode, bulkChecked, onBulkToggle }: Props) {
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const amount = parseFloat(t.amount)
   const formatted = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amount)
 
   return (
-    <div className={`${styles.row} ${bulkMode && bulkChecked ? styles.rowSelected : ''}`} onClick={bulkMode ? onBulkToggle : undefined} style={bulkMode ? { cursor: 'pointer' } : undefined}>
+    <div className={`${styles.row} ${bulkMode && bulkChecked ? styles.rowSelected : ''} ${confirmDelete ? styles.rowConfirm : ''}`} onClick={bulkMode ? onBulkToggle : undefined} style={bulkMode ? { cursor: 'pointer' } : undefined}>
       {bulkMode && (
         <input type="checkbox" checked={!!bulkChecked} onChange={() => {}} className={styles.bulkCheck} onClick={e => e.stopPropagation()} />
       )}
@@ -42,11 +44,17 @@ export default function TransactionRow({ transaction: t, onDelete, onEdit, bulkM
       <div className={styles.amount} style={{ color: TYPE_COLORS[t.type] }}>
         {t.type === 'income' ? '+' : '-'}{formatted}
       </div>
-      {!bulkMode && onEdit && (
-        <button className={styles.edit} onClick={() => onEdit(t)}>✎</button>
-      )}
-      {!bulkMode && onDelete && (
-        <button className={styles.del} onClick={() => onDelete(t.id)}>✕</button>
+      {!bulkMode && confirmDelete ? (
+        <div className={styles.confirmRow}>
+          <span className={styles.confirmLabel}>Supprimer ?</span>
+          <button className={styles.confirmYes} onClick={() => { setConfirmDelete(false); onDelete?.(t.id) }}>Oui</button>
+          <button className={styles.confirmNo} onClick={() => setConfirmDelete(false)}>Non</button>
+        </div>
+      ) : !bulkMode && (
+        <>
+          {onEdit && <button className={styles.edit} onClick={() => onEdit(t)}>✎</button>}
+          {onDelete && <button className={styles.del} onClick={() => setConfirmDelete(true)}>✕</button>}
+        </>
       )}
     </div>
   )
