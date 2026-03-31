@@ -114,6 +114,7 @@ class DocumentImportView(APIView):
                 if created:
                     cats_created += 1
 
+            from apps.savings.models import SavingsAccount
             for goal_data in full.get('goals', []):
                 deadline = goal_data.get('deadline') or None
                 if deadline:
@@ -121,16 +122,26 @@ class DocumentImportView(APIView):
                         datetime.strptime(deadline, '%Y-%m-%d')
                     except ValueError:
                         deadline = None
+
+                # Résolution du compte épargne par nom
+                savings_account = None
+                acc_name = goal_data.get('savings_account')
+                if acc_name:
+                    savings_account = SavingsAccount.objects.filter(
+                        user=request.user, name__iexact=acc_name
+                    ).first()
+
                 _, created = Goal.objects.get_or_create(
                     user=request.user,
                     name=goal_data['name'],
                     defaults={
-                        'icon':           goal_data.get('icon', '🎯'),
-                        'target_amount':  goal_data['target_amount'],
-                        'current_amount': goal_data.get('current_amount', 0),
-                        'deadline':       deadline or '2025-12-31',
-                        'type':           goal_data.get('type', 'savings'),
-                        'color':          '#a855f7',
+                        'icon':            goal_data.get('icon', '🎯'),
+                        'target_amount':   goal_data['target_amount'],
+                        'current_amount':  goal_data.get('current_amount', 0),
+                        'deadline':        deadline or '2025-12-31',
+                        'type':            goal_data.get('type', 'savings'),
+                        'color':           '#a855f7',
+                        'savings_account': savings_account,
                     }
                 )
                 if created:

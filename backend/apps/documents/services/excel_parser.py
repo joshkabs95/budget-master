@@ -148,20 +148,22 @@ def _parse_goals(wb) -> list:
     for row in ws.iter_rows(min_row=3, values_only=True):
         if not row:
             continue
-        name    = _clean_str(row[0])
-        icon    = str(row[1] or "🎯").strip()         if len(row) > 1 else "🎯"
-        current = _clean_amount(row[2])                if len(row) > 2 else 0.0
-        target  = _clean_amount(row[3])                if len(row) > 3 else None
-        deadline = _clean_date(row[5])                 if len(row) > 5 else None
+        name            = _clean_str(row[0])
+        icon            = str(row[1] or "🎯").strip()  if len(row) > 1 else "🎯"
+        current         = _clean_amount(row[2])         if len(row) > 2 else 0.0
+        target          = _clean_amount(row[3])         if len(row) > 3 else None
+        deadline        = _clean_date(row[5])           if len(row) > 5 else None
+        savings_account = _clean_str(row[6])            if len(row) > 6 else None
         if not name or not target or target <= 0:
             continue
         results.append({
-            "name":           name,
-            "icon":           icon or "🎯",
-            "current_amount": current or 0.0,
-            "target_amount":  target,
-            "deadline":       deadline or "",
-            "type":           "savings",
+            "name":            name,
+            "icon":            icon or "🎯",
+            "current_amount":  current or 0.0,
+            "target_amount":   target,
+            "deadline":        deadline or "",
+            "type":            "savings",
+            "savings_account": savings_account,
         })
 
     return results

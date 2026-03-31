@@ -52,10 +52,10 @@ DEFAULT_CATEGORIES = [
 ]
 
 DEFAULT_GOALS = [
-    ("Voyage Miami",    "✈️",  0,  2000,  ""),
-    ("Fond d'urgence",  "🛡️",  0,  5000,  ""),
-    ("Voyage Congo",    "🌍",  0,  2500,  ""),
-    ("Business perso",  "🚀",  0,  10000, ""),
+    ("Voyage Miami",    "✈️",  0,  2000,  "", ""),
+    ("Fond d'urgence",  "🛡️",  0,  5000,  "", "Livret A"),
+    ("Voyage Congo",    "🌍",  0,  2500,  "", ""),
+    ("Business perso",  "🚀",  0,  10000, "", ""),
 ]
 
 DEFAULT_SCORES = [
@@ -457,7 +457,7 @@ def _build_goals(wb):
     ws = wb.create_sheet("🥇 Objectifs")
     _tab_color(ws, FG_GOLD)
     ws.sheet_view.showGridLines = False
-    _bg_all(ws, 35, 7, BG_PAGE)
+    _bg_all(ws, 35, 8, BG_PAGE)
 
     ws.column_dimensions["A"].width = 28
     ws.column_dimensions["B"].width = 8
@@ -465,26 +465,28 @@ def _build_goals(wb):
     ws.column_dimensions["D"].width = 16
     ws.column_dimensions["E"].width = 16
     ws.column_dimensions["F"].width = 18
+    ws.column_dimensions["G"].width = 22
 
-    _section_title(ws, 1, 1, "🥇 Objectifs d'épargne", FG_GOLD, span=6)
+    _section_title(ws, 1, 1, "🥇 Objectifs d'épargne", FG_GOLD, span=7)
     _col_headers(ws, 2, [
-        ("Objectif",       FG_GOLD),
-        ("Icône",          FG_MUTED),
-        ("Actuel (€)",     FG_GREEN),
-        ("Cible (€)",      FG_GOLD),
-        ("Progression",    FG_ACCENT),
-        ("Deadline",       FG_MUTED),
+        ("Objectif",           FG_GOLD),
+        ("Icône",              FG_MUTED),
+        ("Actuel (€)",         FG_GREEN),
+        ("Cible (€)",          FG_GOLD),
+        ("Progression",        FG_ACCENT),
+        ("Deadline",           FG_MUTED),
+        ("Compte épargne lié", FG_BLUE),
     ])
 
-    for i, (name, icon, current, target, deadline) in enumerate(DEFAULT_GOALS):
+    for i, (name, icon, current, target, deadline, savings_account) in enumerate(DEFAULT_GOALS):
         pct = f"=IF(D{3+i}>0,C{3+i}/D{3+i},0)"
-        _data_row(ws, 3 + i, [name, icon, current, target, pct, deadline],
-                  colors=[FG_TEXT, FG_TEXT, FG_GREEN, FG_GOLD, FG_ACCENT, FG_MUTED],
-                  num_formats=[None, None, '#,##0.00 €', '#,##0.00 €', '0%', 'DD/MM/YYYY'],
+        _data_row(ws, 3 + i, [name, icon, current, target, pct, deadline, savings_account],
+                  colors=[FG_TEXT, FG_TEXT, FG_GREEN, FG_GOLD, FG_ACCENT, FG_MUTED, FG_BLUE],
+                  num_formats=[None, None, '#,##0.00 €', '#,##0.00 €', '0%', 'DD/MM/YYYY', None],
                   alt=(i % 2 == 1))
 
     for r in range(3 + len(DEFAULT_GOALS), 25):
-        _empty_row(ws, r, 6, alt=(r % 2 == 0))
+        _empty_row(ws, r, 7, alt=(r % 2 == 0))
 
     # Amount validations
     dv_amt = DataValidation(type="decimal", operator="greaterThanOrEqual", formula1="0",
