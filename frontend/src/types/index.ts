@@ -105,7 +105,7 @@ export interface Transaction {
 export interface SavingsAccount {
   id: number
   name: string
-  balance: string
+  initial_balance: string
   target: string | null
   interest_rate: string | null
   color: string
@@ -264,6 +264,7 @@ export interface SavingsSummary {
     name: string
     icon: string
     color: string
+    initial_balance: number
     balance: number
     target: number | null
     interest_rate: number | null

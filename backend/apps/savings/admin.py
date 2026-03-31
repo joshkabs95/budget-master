@@ -4,9 +4,9 @@ from .models import SavingsAccount, SavingsRule
 
 @admin.register(SavingsAccount)
 class SavingsAccountAdmin(admin.ModelAdmin):
-    list_display = ('name', 'icon', 'user', 'balance', 'target', 'interest_rate')
+    list_display = ('name', 'icon', 'user', 'initial_balance', 'target', 'interest_rate')
     search_fields = ('name', 'user__username')
-    ordering = ('-balance',)
+    ordering = ('-initial_balance',)
     list_per_page = 25
 
 

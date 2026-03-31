@@ -4,7 +4,7 @@ from django.conf import settings
 class SavingsAccount(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='savings_accounts')
     name = models.CharField(max_length=100)
-    balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    initial_balance = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     target = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     interest_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     color = models.CharField(max_length=7, default='#3b82f6')
@@ -13,10 +13,10 @@ class SavingsAccount(models.Model):
 
     class Meta:
         db_table = 'savings_accounts'
-        ordering = ['-balance']
+        ordering = ['-initial_balance']
 
     def __str__(self):
-        return f"{self.icon} {self.name} — {self.balance}€"
+        return f"{self.icon} {self.name} — {self.initial_balance}€"
 
     def recalculate_balance(self):
         from apps.transactions.models import Transaction
@@ -25,8 +25,7 @@ class SavingsAccount(models.Model):
             savings_account=self,
             type='saving'
         ).aggregate(s=models.Sum('amount'))['s'] or 0
-        self.balance = total
-        self.save()
+        return float(self.initial_balance) + float(total)
 
 
 class SavingsRule(models.Model):

@@ -4,7 +4,7 @@ from .models import SavingsAccount, SavingsRule
 class SavingsAccountSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavingsAccount
-        fields = ['id', 'name', 'balance', 'target', 'interest_rate', 'color', 'icon', 'created_at']
+        fields = ['id', 'name', 'initial_balance', 'target', 'interest_rate', 'color', 'icon', 'created_at']
         read_only_fields = ['created_at']
 
     def create(self, validated_data):

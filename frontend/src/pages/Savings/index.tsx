@@ -18,10 +18,10 @@ interface FormState {
   color: string
   interest_rate: string
   target: string
-  balance: string
+  initial_balance: string
 }
 
-const defaultForm: FormState = { name: '', icon: '🏦', color: '#2dd4bf', interest_rate: '', target: '', balance: '' }
+const defaultForm: FormState = { name: '', icon: '🏦', color: '#2dd4bf', interest_rate: '', target: '', initial_balance: '' }
 
 export default function Savings() {
   const [tab, setTab] = useState<Tab>('accounts')
@@ -55,7 +55,7 @@ export default function Savings() {
       color: acc.color,
       interest_rate: acc.interest_rate != null ? String(acc.interest_rate) : '',
       target: acc.target != null ? String(acc.target) : '',
-      balance: String(acc.balance),
+      initial_balance: acc.initial_balance != null ? String(acc.initial_balance) : '0',
     })
     setShowModal(true)
   }
@@ -70,7 +70,7 @@ export default function Savings() {
         color: form.color,
         interest_rate: form.interest_rate ? parseFloat(form.interest_rate) : null,
         target: form.target ? parseFloat(form.target) : null,
-        balance: form.balance ? parseFloat(form.balance) : 0,
+        initial_balance: form.initial_balance ? parseFloat(form.initial_balance) : 0,
       }
       if (editing != null) {
         await savingsAPI.accounts.update(editing, payload)
@@ -228,8 +228,8 @@ export default function Savings() {
 
               <div className={styles.fieldRow}>
                 <div className={styles.field}>
-                  <label>Solde actuel (€)</label>
-                  <input className={styles.input} type="number" step="0.01" placeholder="0.00" value={form.balance} onChange={e => setForm(f => ({ ...f, balance: e.target.value }))} />
+                  <label>Solde initial (€)</label>
+                  <input className={styles.input} type="number" step="0.01" placeholder="0.00" value={form.initial_balance} onChange={e => setForm(f => ({ ...f, initial_balance: e.target.value }))} />
                 </div>
                 <div className={styles.field}>
                   <label>Taux d'intérêt (%/an)</label>

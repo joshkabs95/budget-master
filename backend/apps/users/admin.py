@@ -30,8 +30,8 @@ class SavingsAccountInline(admin.TabularInline):
     from apps.savings.models import SavingsAccount
     model = SavingsAccount
     extra = 0
-    fields = ('name', 'icon', 'balance', 'target', 'interest_rate')
-    ordering = ('-balance',)
+    fields = ('name', 'icon', 'initial_balance', 'target', 'interest_rate')
+    ordering = ('-initial_balance',)
     show_change_link = True
     verbose_name_plural = '🏦 Comptes épargne'
 
