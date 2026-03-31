@@ -35,6 +35,21 @@ class Goal(models.Model):
             return 'medium'
         return 'long'
 
+    def get_effective_amount(self):
+        """
+        Si un compte épargne est lié, la progression = somme des transactions
+        'saving' rattachées à cet objectif (source de vérité).
+        Sinon, utilise current_amount saisi manuellement.
+        """
+        if self.savings_account_id:
+            from apps.transactions.models import Transaction
+            from django.db.models import Sum
+            total = Transaction.objects.filter(
+                goal=self, type='saving'
+            ).aggregate(s=Sum('amount'))['s'] or 0
+            return float(total)
+        return float(self.current_amount)
+
     @property
     def progress(self):
         if self.target_amount > 0:

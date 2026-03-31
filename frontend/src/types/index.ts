@@ -163,16 +163,18 @@ export interface CompensationResult {
 export interface Goal {
   id: number
   savings_account: number | null
+  savings_account_detail: { id: number; name: string; icon: string; color: string } | null
   name: string
   type: 'savings' | 'expense'
   target_amount: string
-  current_amount: string
+  current_amount: number
   deadline: string
   icon: string
   color: string
   horizon: 'short' | 'medium' | 'long'
   progress: number
   monthly_required: number
+  months_to_goal: number | null
   created_at: string
 }
 

@@ -28,8 +28,26 @@ class GoalViewSet(viewsets.ModelViewSet):
         amount = Decimal(str(request.data.get('amount', 0)))
         if amount <= 0:
             return Response({"error": "Le montant doit être positif."}, status=status.HTTP_400_BAD_REQUEST)
-        goal.current_amount += amount
-        goal.save()
+
+        if goal.savings_account:
+            # Crée une vraie transaction épargne liée au compte et à l'objectif
+            from apps.transactions.models import Transaction
+            from datetime import date
+            Transaction.objects.create(
+                user=goal.user,
+                type='saving',
+                savings_account=goal.savings_account,
+                goal=goal,
+                amount=amount,
+                label=f"Versement — {goal.name}",
+                date=date.today(),
+                source='manual',
+            )
+        else:
+            # Objectif sans compte lié : mise à jour manuelle
+            goal.current_amount += amount
+            goal.save()
+
         return Response(GoalSerializer(goal, context={'request': request}).data)
 
     @action(detail=False, methods=['get'])

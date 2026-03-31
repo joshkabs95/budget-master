@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { goalsAPI } from '../../services/api'
+import { goalsAPI, savingsAPI } from '../../services/api'
 import Modal from '../../components/Modal/Modal'
 import ProgressBar from '../../components/ProgressBar/ProgressBar'
 import ConfettiCelebration from '../../components/ConfettiCelebration/ConfettiCelebration'
 import { useToast } from '../../context/ToastContext'
-import type { Goal, CashFlowMonth } from '../../types'
+import type { Goal, SavingsAccount, CashFlowMonth } from '../../types'
 import styles from './Goals.module.css'
 
 function goalStatus(g: Goal): { label: string; color: string; bg: string } {
@@ -16,7 +16,7 @@ function goalStatus(g: Goal): { label: string; color: string; bg: string } {
     if (daysLeft < 0) return { label: '⚠️ En retard', color: '#ef4444', bg: 'rgba(239,68,68,0.12)' }
     const needed = g.monthly_required
     const target = parseFloat(g.target_amount)
-    const current = parseFloat(g.current_amount)
+    const current = g.current_amount
     const monthsLeft = daysLeft / 30
     if (needed > 0 && monthsLeft > 0) {
       const projectedShortfall = (target - current) - needed * monthsLeft
@@ -46,11 +46,12 @@ const HORIZON_COLORS: Record<string, string> = {
   long: 'var(--accent-purple)',
 }
 
-const BLANK_GOAL = { name: '', type: 'savings', target_amount: '', current_amount: '0', deadline: '', icon: '🎯', color: '#a855f7' }
+const BLANK_GOAL = { name: '', type: 'savings', target_amount: '', current_amount: '0', deadline: '', icon: '🎯', color: '#a855f7', savings_account: '' }
 
 export default function Goals() {
   const [goals, setGoals] = useState<Goal[]>([])
   const [cashflow, setCashflow] = useState<CashFlowMonth[]>([])
+  const [savingsAccounts, setSavingsAccounts] = useState<SavingsAccount[]>([])
   const [horizon, setHorizon] = useState('')
   const [type, setType] = useState('')
   const [contribute, setContribute] = useState<Goal | null>(null)
@@ -59,7 +60,7 @@ export default function Goals() {
   const [showAdd, setShowAdd] = useState(false)
   const [newGoal, setNewGoal] = useState({ ...BLANK_GOAL })
   const [editGoal, setEditGoal] = useState<Goal | null>(null)
-  const [editForm, setEditForm] = useState({ name: '', type: 'savings', target_amount: '', current_amount: '', deadline: '', icon: '🎯', color: '#a855f7' })
+  const [editForm, setEditForm] = useState({ name: '', type: 'savings', target_amount: '', current_amount: '', deadline: '', icon: '🎯', color: '#a855f7', savings_account: '' })
   const [deleteGoal, setDeleteGoal] = useState<Goal | null>(null)
   const { toast } = useToast()
 
@@ -69,6 +70,7 @@ export default function Goals() {
 
   useEffect(() => { load() }, [horizon, type])
   useEffect(() => { goalsAPI.cashflow(24).then(r => setCashflow(r.data)).catch(() => {}) }, [])
+  useEffect(() => { savingsAPI.accounts.list().then(r => setSavingsAccounts(r.data.results ?? r.data)) }, [])
 
   const doContribute = async () => {
     if (!contribute) return
@@ -79,7 +81,8 @@ export default function Goals() {
       setConfetti(true)
       toast(`🎉 Objectif "${contribute.name}" atteint !`)
     } else {
-      toast(`+${a.toFixed(0)} € versés sur "${contribute.name}"`)
+      const accName = contribute.savings_account_detail?.name
+      toast(accName ? `+${a.toFixed(0)} € versés sur ${accName}` : `+${a.toFixed(0)} € versés sur "${contribute.name}"`)
     }
     setContribute(null)
     setAmount('')
@@ -87,7 +90,12 @@ export default function Goals() {
   }
 
   const doAdd = async () => {
-    await goalsAPI.create({ ...newGoal, target_amount: parseFloat(newGoal.target_amount), current_amount: parseFloat(newGoal.current_amount) })
+    await goalsAPI.create({
+      ...newGoal,
+      target_amount: parseFloat(newGoal.target_amount),
+      current_amount: newGoal.savings_account ? 0 : parseFloat(newGoal.current_amount),
+      savings_account: newGoal.savings_account || null,
+    })
     setShowAdd(false)
     setNewGoal({ ...BLANK_GOAL })
     toast('Objectif créé')
@@ -100,10 +108,11 @@ export default function Goals() {
       name: g.name,
       type: g.type,
       target_amount: String(parseFloat(g.target_amount)),
-      current_amount: String(parseFloat(g.current_amount)),
+      current_amount: String(g.current_amount),
       deadline: g.deadline,
       icon: g.icon,
       color: g.color,
+      savings_account: g.savings_account ? String(g.savings_account) : '',
     })
   }
 
@@ -112,7 +121,8 @@ export default function Goals() {
     await goalsAPI.update(editGoal.id, {
       ...editForm,
       target_amount: parseFloat(editForm.target_amount),
-      current_amount: parseFloat(editForm.current_amount),
+      current_amount: editForm.savings_account ? 0 : parseFloat(editForm.current_amount),
+      savings_account: editForm.savings_account || null,
     })
     setEditGoal(null)
     toast('Objectif modifié')
@@ -134,7 +144,6 @@ export default function Goals() {
       {([
         { label: 'Nom', key: 'name', type: 'text', placeholder: 'Vacances été' },
         { label: 'Montant cible (€)', key: 'target_amount', type: 'number', placeholder: '1500' },
-        { label: 'Montant actuel (€)', key: 'current_amount', type: 'number', placeholder: '0' },
         { label: 'Deadline', key: 'deadline', type: 'date', placeholder: '' },
         { label: 'Icône', key: 'icon', type: 'text', placeholder: '🎯' },
       ] as const).map(f => (
@@ -144,6 +153,24 @@ export default function Goals() {
             onChange={e => setForm({ ...form, [f.key]: e.target.value })} />
         </div>
       ))}
+      <div className={styles.field}><label>Compte épargne lié (optionnel)</label>
+        <select className={styles.input} value={form.savings_account} onChange={e => setForm({ ...form, savings_account: e.target.value })}>
+          <option value="">— Aucun (saisie manuelle) —</option>
+          {savingsAccounts.map(a => (
+            <option key={a.id} value={a.id}>{a.icon} {a.name}</option>
+          ))}
+        </select>
+        {form.savings_account && (
+          <span className={styles.accountHint}>La progression sera calculée automatiquement depuis les transactions.</span>
+        )}
+      </div>
+      {!form.savings_account && (
+        <div className={styles.field}><label>Montant actuel (€)</label>
+          <input type="number" className={styles.input} placeholder="0"
+            value={form.current_amount}
+            onChange={e => setForm({ ...form, current_amount: e.target.value })} />
+        </div>
+      )}
       <div className={styles.field}><label>Type</label>
         <select className={styles.input} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
           <option value="savings">Épargne</option>
@@ -183,7 +210,7 @@ export default function Goals() {
         <AnimatePresence>
           {goals.map(g => {
             const target = parseFloat(g.target_amount)
-            const current = parseFloat(g.current_amount)
+            const current = g.current_amount
             return (
               <motion.div key={g.id} className={styles.card} layout
                 initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
@@ -206,6 +233,15 @@ export default function Goals() {
                     </div>
                   </div>
                 </div>
+
+                {/* Compte épargne lié */}
+                {g.savings_account_detail && (
+                  <div className={styles.linkedAccount} style={{ borderColor: `${g.savings_account_detail.color}44` }}>
+                    <span>{g.savings_account_detail.icon}</span>
+                    <span style={{ color: g.savings_account_detail.color }}>{g.savings_account_detail.name}</span>
+                  </div>
+                )}
+
                 <div className={styles.cardProgress}>
                   <div className={styles.cardAmounts}>
                     <span style={{ color: g.color }}>{current.toFixed(0)} €</span>
@@ -217,11 +253,11 @@ export default function Goals() {
                   <div className={styles.cardDeadline}>📅 {new Date(g.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
                   <div className={styles.cardRequired}>{g.monthly_required.toFixed(0)} €/mois requis</div>
                 </div>
-                {g.progress < 100 && (g as any).months_to_goal != null && (
+                {g.progress < 100 && g.months_to_goal != null && (
                   <div className={styles.projection}>
-                    {(g as any).months_to_goal === 0
+                    {g.months_to_goal === 0
                       ? '✅ Objectif atteint'
-                      : `📈 À ce rythme : atteint dans ${(g as any).months_to_goal} mois`}
+                      : `📈 À ce rythme : atteint dans ${g.months_to_goal} mois`}
                   </div>
                 )}
                 {g.progress < 100 && (
@@ -258,8 +294,14 @@ export default function Goals() {
       {/* Contribute modal */}
       <Modal open={!!contribute} onClose={() => setContribute(null)} title={`Verser sur : ${contribute?.name}`}>
         <div className={styles.form}>
+          {contribute?.savings_account_detail && (
+            <div className={styles.contributeInfo}>
+              <span>{contribute.savings_account_detail.icon}</span>
+              <span>Crée une transaction épargne sur <strong style={{ color: contribute.savings_account_detail.color }}>{contribute.savings_account_detail.name}</strong></span>
+            </div>
+          )}
           <div className={styles.field}><label>Montant (€)</label>
-            <input type="number" step="0.01" className={styles.input} value={amount} onChange={e => setAmount(e.target.value)} placeholder="100" />
+            <input type="number" step="0.01" className={styles.input} value={amount} onChange={e => setAmount(e.target.value)} placeholder="100" autoFocus />
           </div>
           <button className={styles.btnPrimary} style={{ width: '100%' }} onClick={doContribute}>Confirmer le versement</button>
         </div>
