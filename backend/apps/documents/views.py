@@ -192,7 +192,12 @@ class TemplateDownloadView(APIView):
             month = f"{today.year}-{today.month:02d}"
         try:
             from .services.excel_template import generate_template
-            xlsx_bytes = generate_template(month)
+            from apps.savings.models import SavingsAccount
+            acc_names = list(
+                SavingsAccount.objects.filter(user=request.user)
+                .values_list('name', flat=True)
+            )
+            xlsx_bytes = generate_template(month, savings_accounts=acc_names)
         except Exception as e:
             return Response({'error': str(e)}, status=500)
 

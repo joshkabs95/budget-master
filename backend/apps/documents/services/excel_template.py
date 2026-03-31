@@ -171,24 +171,50 @@ def _total_row(ws, row, values, height=19):
 
 # ── Main generator ────────────────────────────────────────────────────────────
 
-def generate_template(month: str) -> bytes:
+def generate_template(month: str, savings_accounts: list[str] | None = None) -> bytes:
     year, m = map(int, month.split("-"))
     month_label = _MONTHS_FR[m - 1]
 
+    cat_names = [name for name, _, _ in DEFAULT_CATEGORIES]
+    acc_names = savings_accounts or []
+
     wb = Workbook()
 
+    _build_lists(wb, cat_names, acc_names)   # hidden sheet — must be first
     _build_instructions(wb, month_label, year)
     _build_revenus(wb, month_label, year, m)
-    _build_fixes(wb, month_label, year, m)
-    _build_variables(wb, month_label, year)
+    _build_fixes(wb, month_label, year, m, cat_names)
+    _build_variables(wb, month_label, year, cat_names)
     _build_categories(wb)
-    _build_goals(wb)
+    _build_goals(wb, acc_names)
     _build_scores(wb)
     _build_config(wb, month, year, m)
 
     buf = io.BytesIO()
     wb.save(buf)
     return buf.getvalue()
+
+
+# ── Hidden sheet : _lists (dropdowns source) ──────────────────────────────────
+
+def _build_lists(wb, cat_names: list, acc_names: list):
+    ws = wb.create_sheet("_lists")
+    ws.sheet_state = "hidden"
+
+    ws["A1"] = "categories"
+    for i, name in enumerate(cat_names, 2):
+        ws.cell(i, 1, value=name)
+
+    ws["B1"] = "comptes"
+    for i, name in enumerate(acc_names, 2):
+        ws.cell(i, 2, value=name)
+
+
+def _list_ref(sheet, col_letter, count, header=True) -> str:
+    """Returns an Excel formula reference like '_lists'!$A$2:$A$15"""
+    start = 2 if header else 1
+    end = start + count - 1
+    return f"'_lists'!${col_letter}${start}:${col_letter}${end}"
 
 
 # ── Sheet 0 : Instructions ────────────────────────────────────────────────────
@@ -291,7 +317,7 @@ def _build_revenus(wb, month_label, year, m):
 
 # ── Sheet 2 : Dépenses fixes ──────────────────────────────────────────────────
 
-def _build_fixes(wb, month_label, year, m):
+def _build_fixes(wb, month_label, year, m, cat_names=None):
     ws = wb.create_sheet("🔴 Dépenses fixes")
     _tab_color(ws, FG_RED)
     ws.sheet_view.showGridLines = False
@@ -335,6 +361,12 @@ def _build_fixes(wb, month_label, year, m):
                             showErrorMessage=True)
     ws.add_data_validation(dv_day); dv_day.add("D3:D44")
 
+    if cat_names:
+        dv_cat = DataValidation(type="list", formula1=_list_ref("_lists", "A", len(cat_names)),
+                                showDropDown=False, showErrorMessage=True,
+                                errorTitle="Catégorie invalide", error="Choisissez une catégorie de la liste.")
+        ws.add_data_validation(dv_cat); dv_cat.add("C3:C44")
+
     ws.freeze_panes = "A3"
     ws.page_setup.orientation = "portrait"
     ws.page_setup.fitToPage = True
@@ -342,7 +374,7 @@ def _build_fixes(wb, month_label, year, m):
 
 # ── Sheet 3 : Dépenses variables ──────────────────────────────────────────────
 
-def _build_variables(wb, month_label, year):
+def _build_variables(wb, month_label, year, cat_names=None):
     ws = wb.create_sheet("🟠 Dép. variables")
     _tab_color(ws, FG_ORANGE)
     ws.sheet_view.showGridLines = False
@@ -389,6 +421,12 @@ def _build_variables(wb, month_label, year):
                             showErrorMessage=True, errorTitle="Occurrences",
                             error="Entrez un nombre entre 1 et 10.")
     ws.add_data_validation(dv_occ); dv_occ.add("E3:E44")
+
+    if cat_names:
+        dv_cat = DataValidation(type="list", formula1=_list_ref("_lists", "A", len(cat_names)),
+                                showDropDown=False, showErrorMessage=True,
+                                errorTitle="Catégorie invalide", error="Choisissez une catégorie de la liste.")
+        ws.add_data_validation(dv_cat); dv_cat.add("D3:D44")
 
     ws.freeze_panes = "A3"
     ws.page_setup.orientation = "portrait"
@@ -453,7 +491,7 @@ def _build_categories(wb):
 
 # ── Sheet 5 : Objectifs ───────────────────────────────────────────────────────
 
-def _build_goals(wb):
+def _build_goals(wb, acc_names=None):
     ws = wb.create_sheet("🥇 Objectifs")
     _tab_color(ws, FG_GOLD)
     ws.sheet_view.showGridLines = False
@@ -492,6 +530,11 @@ def _build_goals(wb):
     dv_amt = DataValidation(type="decimal", operator="greaterThanOrEqual", formula1="0",
                             showErrorMessage=True)
     ws.add_data_validation(dv_amt); dv_amt.add("C3:D24")
+
+    if acc_names:
+        dv_acc = DataValidation(type="list", formula1=_list_ref("_lists", "B", len(acc_names)),
+                                showDropDown=False, showErrorMessage=False)
+        ws.add_data_validation(dv_acc); dv_acc.add("G3:G24")
 
     ws.freeze_panes = "A3"
     ws.page_setup.orientation = "portrait"
