@@ -39,6 +39,8 @@
 .accBalance { font-size: 1.625rem; font-weight: 700; letter-spacing: -0.025em; }
 .accTarget { font-size: 0.75rem; color: var(--text-muted); }
 .accContrib { font-size: 0.8rem; color: var(--accent-green); font-weight: 500; }
+.accContribNone { font-size: 0.78rem; color: var(--text-muted); font-style: italic; }
+.accNoTarget { font-size: 0.75rem; color: var(--text-muted); font-style: italic; min-height: 1.5rem; display: flex; align-items: center; }
 
 /* Card actions (edit/delete) */
 .accActions {

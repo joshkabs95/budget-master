@@ -27,18 +27,35 @@ def get_savings_summary(user, month: str = None):
 
     accounts = SavingsAccount.objects.filter(user=user)
     accounts_data = []
+
+    # All saving transactions for balance recalculation (single query, then filter in Python)
+    all_saving_txns = (
+        Transaction.objects.filter(user=user, type='saving', savings_account__isnull=False)
+        .values('savings_account_id')
+        .annotate(total=Sum('amount'))
+    )
+    txn_balance_map = {row['savings_account_id']: row['total'] for row in all_saving_txns}
+
     for acc in accounts:
+        # Monthly contribution (current month only)
         acc_saved = txns.filter(type='saving', savings_account=acc).aggregate(s=Sum('amount'))['s'] or Decimal('0')
+
+        # Balance: use transaction-derived total when transactions exist (authoritative),
+        # fall back to stored balance when no transactions have been recorded yet.
+        txn_total = txn_balance_map.get(acc.id, Decimal('0'))
+        effective_balance = float(txn_total) if txn_total else float(acc.balance)
+
+        target = float(acc.target) if acc.target else None
         accounts_data.append({
             "id": acc.id,
             "name": acc.name,
             "icon": acc.icon,
             "color": acc.color,
-            "balance": float(acc.balance),
-            "target": float(acc.target) if acc.target else None,
+            "balance": effective_balance,
+            "target": target,
             "interest_rate": float(acc.interest_rate) if acc.interest_rate else None,
             "month_contribution": float(acc_saved),
-            "progress": float(acc_saved / acc.target * 100) if acc.target and acc.target > 0 else None,
+            "progress": round(effective_balance / target * 100, 1) if target and target > 0 else None,
         })
 
     try:

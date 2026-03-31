@@ -161,15 +161,21 @@ export default function Savings() {
                   <div className={styles.accBalance} style={{ color: acc.color }}>
                     {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(acc.balance)}
                   </div>
-                  {acc.target != null && (
+                  {acc.target != null ? (
                     <>
                       <ProgressBar value={acc.balance} max={acc.target} color={acc.color} showLabel />
                       <div className={styles.accTarget}>Plafond : {new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(acc.target)}</div>
                     </>
+                  ) : (
+                    <div className={styles.accNoTarget}>Pas de plafond défini</div>
                   )}
-                  <div className={styles.accContrib}>
-                    +{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(acc.month_contribution)} ce mois
-                  </div>
+                  {acc.month_contribution > 0 ? (
+                    <div className={styles.accContrib}>
+                      +{new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(acc.month_contribution)} ce mois
+                    </div>
+                  ) : (
+                    <div className={styles.accContribNone}>Aucun versement ce mois</div>
+                  )}
                 </div>
               ))}
               {summary?.accounts.length === 0 && (
