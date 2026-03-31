@@ -281,10 +281,9 @@ def _build_revenus(wb, month_label, year, m):
         ("Jour du mois",     FG_MUTED),
     ])
 
-    # Pre-filled examples (user's real data)
     examples = [
-        ("Virement DCS'Easyware", 1699, 1),
-        ("Virement Perce-Neige",  1300, 1),
+        ("Versement revenu 1", 0, 1),
+        ("Versement revenu 2", 0, 1),
     ]
     for i, (label, amt, day) in enumerate(examples):
         _data_row(ws, 3 + i, [label, amt, day],
